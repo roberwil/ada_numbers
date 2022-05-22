@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Converters" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Compile Remove="Class1.cs" />
     </ItemGroup>
 
