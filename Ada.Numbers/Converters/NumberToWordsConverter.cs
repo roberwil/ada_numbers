@@ -10,7 +10,7 @@ public static class NumberToWordsConverter
 	private const byte Limit = 15;
 
 	private static readonly List<string> NumberTokens = new();
-	public static string NumberToWords(long number, bool useShortScale = false)
+	public static string Convert(long number, bool useShortScale = false)
 	{
 		if (number.NumberOfDigits() > Limit)
 			return Unsupported;
