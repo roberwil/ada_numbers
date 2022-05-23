@@ -8,7 +8,7 @@ public static class NumberToWordsConverter
 {
 	private const string Unsupported = "<Unsupported>";
 	private const string DecimalSeparator = "Vírgula";
-  private const byte Limit = 15;
+	private const byte Limit = 15;
 
 	private static bool _useShortScale;
 

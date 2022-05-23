@@ -28,7 +28,7 @@ public class ConvertToWordsTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(description, NumberToWordsConverter.Convert(number));
+			Assert.AreEqual(description, number.ToWords());
 		}
 	}
 
@@ -132,7 +132,7 @@ public class ConvertToWordsTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(description, NumberToWordsConverter.Convert(number));
+			Assert.AreEqual(description, number.ToWords());
 		}
 	}
 
@@ -178,7 +178,7 @@ public class ConvertToWordsTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(description, NumberToWordsConverter.Convert(number));
+			Assert.AreEqual(description, number.ToWords());
 		}
 	}
 
@@ -270,7 +270,6 @@ public class ConvertToWordsTest
 		}
 	}
 
-
 	[TestMethod]
 	public void RandomNumbersIntegers()
 	{
@@ -296,7 +295,7 @@ public class ConvertToWordsTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(description, NumberToWordsConverter.Convert(number));
+			Assert.AreEqual(description, number.ToWords());
 		}
 	}
 
@@ -317,7 +316,7 @@ public class ConvertToWordsTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(description, NumberToWordsConverter.Convert(number));
+			Assert.AreEqual(description, number.ToWords());
 		}
 	}
 }
