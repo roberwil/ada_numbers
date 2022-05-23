@@ -8,10 +8,12 @@ public static class NumberToWordsConverter
 {
 	private const string Unsupported = "<Unsupported>";
 	private const string DecimalSeparator = "Vírgula";
+  private const byte Limit = 15;
+  
 	private static bool _useShortScale;
-	private const byte Limit = 15;
 
 	private static readonly List<string> NumberTokens = new();
+  
 	public static string Convert(long number, bool useShortScale = false)
 	{
 		if (number.NumberOfDigits() > Limit)
@@ -23,6 +25,16 @@ public static class NumberToWordsConverter
 		return ResolveNumber(number);
 	}
 
+	public static string Convert(int number, bool useShortScale = false)
+	{
+		return Convert((long)number, useShortScale);
+	}
+
+	public static string Convert(byte number, bool useShortScale = false)
+	{
+		return Convert((long)number, useShortScale);
+  }
+  
 	public static string Convert(decimal number, bool useShortScale = false)
 	{
 		var strNumber = number.ToString(CultureInfo.InvariantCulture).Split(".");
