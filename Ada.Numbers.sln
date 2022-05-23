@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ada.Numbers", "Ada.Numbers\Ada.Numbers.csproj", "{A8ED060F-CA8D-4494-8863-73DD8FA96B7B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ada.Numbers", "AdaNumbers\Ada.Numbers.csproj", "{A8ED060F-CA8D-4494-8863-73DD8FA96B7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ada.Numbers.Tests", "Ada.Numbers.Tests\Ada.Numbers.Tests.csproj", "{60A026A6-160E-4F59-9690-6DCD461C3B3A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ada.Numbers.Tests", "AdaNumbers.Tests\Ada.Numbers.Tests.csproj", "{60A026A6-160E-4F59-9690-6DCD461C3B3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
