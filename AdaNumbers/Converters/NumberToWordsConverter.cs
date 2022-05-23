@@ -1,3 +1,4 @@
+using System.Globalization;
 using Ada.Numbers.Utilities;
 using Ada.Numbers.Constants;
 
@@ -6,6 +7,7 @@ namespace Ada.Numbers.Converters;
 public static class NumberToWordsConverter
 {
 	private const string Unsupported = "<Unsupported>";
+	private const string DecimalSeparator = "vírgula";
 	private static bool _useShortScale;
 	private const byte Limit = 15;
 
@@ -19,6 +21,43 @@ public static class NumberToWordsConverter
 
 		NumberTokens.Clear();
 		return ResolveNumber(number);
+	}
+
+	public static string Convert(decimal number, bool useShortScale = false)
+	{
+		var strNumber = number.ToString(CultureInfo.InvariantCulture).Split(".");
+		var strIntegerPart = strNumber.First();
+		var strDecimalPart = strNumber.Last();
+
+		if (strIntegerPart.Length > Limit || strDecimalPart.Length > Limit)
+			return Unsupported;
+
+		_useShortScale = useShortScale;
+
+		var integerPart = long.Parse(strIntegerPart);
+		var decimalPart = long.Parse(strDecimalPart);
+
+		NumberTokens.Clear();
+		var result = ResolveNumber(integerPart);
+
+		if (decimalPart == 0)
+			return result;
+
+		result += $" {DecimalSeparator} ";
+
+		foreach (var dp in strDecimalPart)
+		{
+			if (dp != '0')
+				break;
+
+			result += "zero ";
+		}
+
+
+		NumberTokens.Clear();
+		result += ResolveNumber(decimalPart);
+
+		return result;
 	}
 
 	private static string ResolveNumber(long number, bool flag = false)
