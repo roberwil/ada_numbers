@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Ada.Numbers.Converters;
-using Ada.Numbers.Utilities;
 
 namespace Ada.Numbers.Tests;
 
