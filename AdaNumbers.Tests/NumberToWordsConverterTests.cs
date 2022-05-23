@@ -272,7 +272,7 @@ public class ConvertToWordsTest
 
 
 	[TestMethod]
-	public void RandomNumbers()
+	public void RandomNumbersIntegers()
 	{
 		var numbers = new Dictionary<int, string>()
 		{
@@ -301,35 +301,23 @@ public class ConvertToWordsTest
 	}
 
 	[TestMethod]
-	public void CategorizeNumbersTest()
+	public void RandomNumbersDecimals()
 	{
-		var numbers = new Dictionary<long, NumberCategory>()
+		var numbers = new Dictionary<decimal, string>()
 		{
-			{1, NumberCategory.Unity},
-			{11, NumberCategory.Ten},
-			{111, NumberCategory.Hundred},
-
-			{1111, NumberCategory.Thousand},
-			{11111, NumberCategory.Thousand},
-			{111111, NumberCategory.Thousand},
-
-			{1111111, NumberCategory.Million},
-			{11111111, NumberCategory.Million},
-			{111111111, NumberCategory.Million},
-
-			{1111111111, NumberCategory.ThousandMiliions},
-			{11111111111, NumberCategory.ThousandMiliions},
-			{111111111111, NumberCategory.ThousandMiliions},
-
-			{1111111111111, NumberCategory.Billion},
-			{11111111111111, NumberCategory.Billion},
-			{111111111111111, NumberCategory.Billion}
+			{ 42.2m, "Quarenta e Dois Vírgula Dois" },
+			{ 102.0m, "Cento e Dois" },
+			{ 103.000m, "Cento e Três" },
+			{ 113.02m, "Cento e Treze Vírgula Zero Dois" },
+			{ 123.0045m, "Cento e Vinte e Três Vírgula Zero Zero Quarenta e Cinco" },
+			{ 902.982m, "Novecentos e Dois Vírgula Novecentos e Oitenta e Dois" },
+			{ 100000.001m, "Cem Mil Vírgula Zero Zero Um" },
+			{ 100123.100123m, "Cem Mil Cento e Vinte e Três Vírgula Cem Mil Cento e Vinte e Três" }
 		};
 
-		foreach (var (number, category) in numbers)
+		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(category, number.Category());
+			Assert.AreEqual(description, NumberToWordsConverter.Convert(number));
 		}
-
 	}
 }
