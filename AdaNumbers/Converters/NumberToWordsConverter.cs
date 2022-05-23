@@ -9,11 +9,11 @@ public static class NumberToWordsConverter
 	private const string Unsupported = "<Unsupported>";
 	private const string DecimalSeparator = "Vírgula";
   private const byte Limit = 15;
-  
+
 	private static bool _useShortScale;
 
 	private static readonly List<string> NumberTokens = new();
-  
+
 	public static string Convert(long number, bool useShortScale = false)
 	{
 		if (number.NumberOfDigits() > Limit)
@@ -34,7 +34,7 @@ public static class NumberToWordsConverter
 	{
 		return Convert((long)number, useShortScale);
   }
-  
+
 	public static string Convert(decimal number, bool useShortScale = false)
 	{
 		var strNumber = number.ToString(CultureInfo.InvariantCulture).Split(".");
@@ -70,6 +70,16 @@ public static class NumberToWordsConverter
 		result += ResolveNumber(decimalPart);
 
 		return result;
+	}
+
+	public static string Convert(double number, bool useShortScale = false)
+	{
+		return Convert((decimal)number, useShortScale);
+	}
+
+	public static string Convert(float number, bool useShortScale = false)
+	{
+		return Convert((decimal)number, useShortScale);
 	}
 
 	private static string ResolveNumber(long number, bool flag = false)
