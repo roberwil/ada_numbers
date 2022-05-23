@@ -21,6 +21,16 @@ public static class NumberToWordsConverter
 		return ResolveNumber(number);
 	}
 
+	public static string Convert(int number, bool useShortScale = false)
+	{
+		return Convert((long)number, useShortScale);
+	}
+
+	public static string Convert(byte number, bool useShortScale = false)
+	{
+		return Convert((long)number, useShortScale);
+	}
+
 	private static string ResolveNumber(long number, bool flag = false)
 	{
 		var result = string.Empty;
