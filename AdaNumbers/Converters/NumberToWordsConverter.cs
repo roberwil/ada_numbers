@@ -7,7 +7,7 @@ namespace Ada.Numbers.Converters;
 public static class NumberToWordsConverter
 {
 	private const string Unsupported = "<Unsupported>";
-	private const string DecimalSeparator = "vírgula";
+	private const string DecimalSeparator = "Vírgula";
 	private static bool _useShortScale;
 	private const byte Limit = 15;
 
@@ -50,7 +50,7 @@ public static class NumberToWordsConverter
 			if (dp != '0')
 				break;
 
-			result += "zero ";
+			result += "Zero ";
 		}
 
 
