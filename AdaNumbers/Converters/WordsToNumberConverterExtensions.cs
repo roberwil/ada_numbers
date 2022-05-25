@@ -1,6 +1,9 @@
+
 namespace Ada.Numbers.Converters;
 
-public class WordsToNumberConverterExtensions
+public static class WordsToNumberConverterExtensions
 {
-    
+    private static readonly Dictionary<string, long> wordsToNumberMap = new()
+    {
+    };
 }
