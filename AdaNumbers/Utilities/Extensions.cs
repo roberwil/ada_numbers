@@ -25,6 +25,18 @@ public static class Extensions
 		}
 	}
 
+	public static long? Resolve(this Dictionary<string, long> pair, string words)
+	{
+		try
+		{
+			return pair[words];
+		}
+		catch (KeyNotFoundException)
+		{
+			return null;
+		}
+	}
+
 	public static byte NumberOfDigits(this long number)
 	{
 		return (byte)number.ToString().Length;
