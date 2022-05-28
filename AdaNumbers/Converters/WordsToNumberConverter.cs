@@ -6,6 +6,7 @@ namespace Ada.Numbers.Converters;
 
 public class WordsToNumberConverter
 {
+	private const string NumbersSeparator = "e";
 	private static readonly Dictionary<string, long> WordsToNumberMap = new()
 	{
 		{ WrittenNumbers.Zero, 0 },
@@ -67,6 +68,9 @@ public class WordsToNumberConverter
 
 		foreach (var token in stringTokens)
 		{
+			if (token == NumbersSeparator || token == string.Empty)
+				continue;
+
 			var number = WordsToNumberMap.Resolve(token);
 
 			if (number is not null)

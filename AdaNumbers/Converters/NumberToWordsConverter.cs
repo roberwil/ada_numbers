@@ -6,7 +6,7 @@ namespace Ada.Numbers.Converters;
 
 public static class NumberToWordsConverter
 {
-	private const string Unsupported = "<Unsupported>";
+	private const string NumbersSeparator = "e";
 	private const string DecimalSeparator = "Vírgula";
 	private const byte Limit = 15;
 
@@ -62,7 +62,7 @@ public static class NumberToWordsConverter
 			if (dp != '0')
 				break;
 
-			result += "Zero ";
+			result += $"{WrittenNumbers.Zero} ";
 		}
 
 
@@ -159,7 +159,7 @@ public static class NumberToWordsConverter
 			if (numbersThatIgnoreSeparator.Contains(currentToken))
 				result += $" {currentToken}";
 			else
-				result += $" e {currentToken}";
+				result += $" {NumbersSeparator} {currentToken}";
 		}
 
 		return result;
