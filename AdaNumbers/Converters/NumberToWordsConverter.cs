@@ -17,7 +17,7 @@ public static class NumberToWordsConverter
 	public static string Convert(long number, bool useShortScale = false)
 	{
 		if (number.NumberOfDigits() > Limit)
-			return Unsupported;
+			return Messages.Unsupported;
 
 		_useShortScale = useShortScale;
 
@@ -42,7 +42,7 @@ public static class NumberToWordsConverter
 		var strDecimalPart = strNumber.Last();
 
 		if (strIntegerPart.Length > Limit || strDecimalPart.Length > Limit)
-			return Unsupported;
+			return Messages.Unsupported;
 
 		_useShortScale = useShortScale;
 
