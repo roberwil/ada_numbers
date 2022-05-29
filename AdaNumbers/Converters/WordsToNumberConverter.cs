@@ -1,10 +1,11 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Ada.Numbers.Constants;
 using Ada.Numbers.Utilities;
 
 namespace Ada.Numbers.Converters;
 
-public class WordsToNumberConverter
+public static class WordsToNumberConverter
 {
 	private const string NumbersSeparator = "e";
 	private static readonly Dictionary<string, long> WordsToNumberMap = new()
@@ -76,9 +77,9 @@ public class WordsToNumberConverter
 		WrittenNumbers.TrillionPlural
 	};
 
-
 	public static string? Convert(string words)
 	{
+		words = Regex.Replace(words, "\\s+", " ");
 		var info = CultureInfo.CurrentCulture.TextInfo;
 		var result = WordsToNumberMap.Resolve(info.ToTitleCase(words));
 
@@ -94,10 +95,9 @@ public class WordsToNumberConverter
 
 			switch (token)
 			{
-				case "":
-					continue;
 				case NumbersSeparator when cursor == 0 || cursor == stringTokens.Length - 1:
-				case NumbersSeparator when NumbersThatIgnoreSeparator.Contains(stringTokens[cursor+1]):
+				case NumbersSeparator when NumbersThatIgnoreSeparator.Contains(stringTokens[cursor+1]) || stringTokens[cursor+1] == "":
+				case NumbersSeparator when cursor > 0 && stringTokens[cursor - 1] == NumbersSeparator:
 					return Messages.InvalidNumber;
 				case NumbersSeparator:
 					continue;
@@ -107,6 +107,9 @@ public class WordsToNumberConverter
 
 			if (IsToJoinOne(token))
 				currentToken = $"{WrittenNumbers.One} {token}";
+
+			if (cursor > 0 && !NumbersThatIgnoreSeparator.Contains(currentToken) && stringTokens[cursor-1] != NumbersSeparator)
+				return Messages.InvalidNumber;
 
 			var number = WordsToNumberMap.Resolve(currentToken);
 
@@ -131,7 +134,7 @@ public class WordsToNumberConverter
 
 	private static bool IsToJoinOne(string token)
 	{
-		if (token == WrittenNumbers.One || token == WrittenNumbers.Thousand)
+		if (token is WrittenNumbers.One or WrittenNumbers.Thousand)
 			return false;
 
 		return WrittenNumbers.MillionSingular.Contains(token) ||
