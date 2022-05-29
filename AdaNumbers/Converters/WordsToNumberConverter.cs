@@ -71,11 +71,16 @@ public class WordsToNumberConverter
 			if (token == NumbersSeparator || token == string.Empty)
 				continue;
 
-			var number = WordsToNumberMap.Resolve(token);
+			var currentToken = token;
+
+			if (IsToJoinOne(token))
+				currentToken = $"{WrittenNumbers.One} {token}";
+
+			var number = WordsToNumberMap.Resolve(currentToken);
 
 			if (number is not null)
 			{
-				if (IsToComputeMultiplier(token, numericTokens.Count))
+				if (IsToComputeMultiplier(currentToken, numericTokens.Count))
 				{
 					var multiplier = FindMultiplier(ref numericTokens);
 					number *= multiplier;
@@ -92,13 +97,26 @@ public class WordsToNumberConverter
 		return numericTokens.Sum().ToString();
 	}
 
+	private static bool IsToJoinOne(string token)
+	{
+		if (token == WrittenNumbers.One || token == WrittenNumbers.Thousand)
+			return false;
+
+		return WrittenNumbers.MillionSingular.Contains(token) ||
+		       WrittenNumbers.BillionSingular.Contains(token) ||
+		       WrittenNumbers.TrillionSingular.Contains(token);
+	}
+
 	private static bool IsToComputeMultiplier(string token, int numberOfNumericTokens)
 	{
-		return (token is WrittenNumbers.Thousand
-			       or WrittenNumbers.MillionSingular or WrittenNumbers.MillionPlural
-			       or WrittenNumbers.ThousandMillion
-			       or WrittenNumbers.BillionSingular or WrittenNumbers.BillionPlural
-			       or WrittenNumbers.TrillionSingular or WrittenNumbers.TrillionPlural)
+		return (token is WrittenNumbers.Thousand or
+			       WrittenNumbers.MillionSingular or
+			       WrittenNumbers.MillionPlural or
+			       WrittenNumbers.ThousandMillion or
+			       WrittenNumbers.BillionSingular or
+			       WrittenNumbers.BillionPlural or
+			       WrittenNumbers.TrillionSingular or
+			       WrittenNumbers.TrillionPlural)
 		       && numberOfNumericTokens != 0;
 	}
 
