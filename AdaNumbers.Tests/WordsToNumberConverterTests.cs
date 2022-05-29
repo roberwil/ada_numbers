@@ -74,7 +74,7 @@ public class WordsToNumberConverterTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
+			Assert.AreEqual(number.ToString(), description.ToNumber());
 		}
 	}
 
@@ -222,7 +222,7 @@ public class WordsToNumberConverterTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
+			Assert.AreEqual(number.ToString(), description.ToNumber());
 		}
 	}
 
@@ -244,7 +244,7 @@ public class WordsToNumberConverterTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
+			Assert.AreEqual(number.ToString(), description.ToNumber());
 		}
 	}
 
