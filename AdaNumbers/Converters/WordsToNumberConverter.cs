@@ -55,6 +55,28 @@ public class WordsToNumberConverter
 		{ WrittenNumbers.BillionPlural, (long)1e12 }
 	};
 
+	private static readonly List<string> NumbersThatIgnoreSeparator = new()
+	{
+		WrittenNumbers.OneHundred,
+		WrittenNumbers.TwoHundred,
+		WrittenNumbers.ThreeHundred,
+		WrittenNumbers.FourHundred,
+		WrittenNumbers.FiveHundred,
+		WrittenNumbers.SixHundred,
+		WrittenNumbers.SevenHundred,
+		WrittenNumbers.EightHundred,
+		WrittenNumbers.NineHundred,
+		WrittenNumbers.Thousand,
+		WrittenNumbers.MillionSingular,
+		WrittenNumbers.MillionPlural,
+		WrittenNumbers.ThousandMillion,
+		WrittenNumbers.BillionSingular,
+		WrittenNumbers.BillionPlural,
+		WrittenNumbers.TrillionSingular,
+		WrittenNumbers.TrillionPlural
+	};
+
+
 	public static string? Convert(string words)
 	{
 		var info = CultureInfo.CurrentCulture.TextInfo;
@@ -66,10 +88,20 @@ public class WordsToNumberConverter
 		string[] stringTokens = words.Split(" ");
 		Stack<long?> numericTokens = new();
 
-		foreach (var token in stringTokens)
+		for (var cursor = 0; cursor < stringTokens.Length; cursor++)
 		{
-			if (token == NumbersSeparator || token == string.Empty)
-				continue;
+			var token = stringTokens[cursor];
+
+			switch (token)
+			{
+				case "":
+					continue;
+				case NumbersSeparator when cursor == 0 || cursor == stringTokens.Length - 1:
+				case NumbersSeparator when NumbersThatIgnoreSeparator.Contains(stringTokens[cursor+1]):
+					return Messages.InvalidNumber;
+				case NumbersSeparator:
+					continue;
+			}
 
 			var currentToken = token;
 
