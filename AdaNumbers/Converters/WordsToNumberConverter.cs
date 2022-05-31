@@ -7,7 +7,7 @@ namespace Ada.Numbers.Converters;
 
 public static class WordsToNumberConverter
 {
-	private const string NumbersSeparator = "e";
+	private const string NumbersSeparator = "E";
 
 	private static readonly Dictionary<string, long> WordsToNumberMap = new()
 	{
@@ -76,7 +76,6 @@ public static class WordsToNumberConverter
 		WrittenNumbers.TrillionPlural
 	};
 
-
 	private static readonly List<string> NumbersThatIgnoreSeparator = new()
 	{
 		WrittenNumbers.OneHundred,
@@ -98,22 +97,39 @@ public static class WordsToNumberConverter
 		WrittenNumbers.TrillionPlural
 	};
 
-	public static string? Convert(string words, bool useShortScale = false)
+	/// <summary>
+	/// Converts a word, i.e. "cento e vinte e dois", to "122"
+	/// </summary>
+	/// <param name="word"> The word to be converted</param>
+	/// <param name="useShortScale"> Use short scale numbering</param>
+	/// <returns>The string which corresponds to the number of the converted word or "InvalidNumber"</returns>
+	public static string? Convert(string word, bool useShortScale = false)
 	{
-		words = Regex.Replace(words, "\\s+", " ");
-		var info = CultureInfo.CurrentCulture.TextInfo;
-		var result = WordsToNumberMap.Resolve(info.ToTitleCase(words.Trim()));
+		// Let the word be ins cute format: no extra spaces, first letter in capital
+		word = Regex.Replace(word, "\\s+", " ");
+		word = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.Trim());
 
-		if (result is not null)
-			return result.ToString();
+		// Try to get a direct match from the map
+		var number = useShortScale
+			? WordsToNumberMap.Resolve(word) ?? WordsToNumberMapShorScale.Resolve(word)
+			: WordsToNumberMap.Resolve(word) ?? WordsToNumberMapLongScale.Resolve(word);
 
-		string[] stringTokens = words.Split(" ");
+		if (number is not null)
+			return number.ToString();
+
+		// It was not found a direct match, so, let's find that bastard
+		string[] stringTokens = word.Split(" ");
 		Stack<long?> numericTokens = new();
 
+		// The algorithm consists on iterating every token so that to find its direct match
+		// in the map and then stack it up. If the next number to be stacked requires a multiplier,
+		// we find it and stack it up after popping the later numbers. When all the matches are found
+		// The number is their sum
 		for (var cursor = 0; cursor < stringTokens.Length; cursor++)
 		{
 			var token = stringTokens[cursor];
 
+			// Check if separator is used correctly or is repeated
 			switch (token)
 			{
 				case NumbersSeparator when cursor == 0 || cursor == stringTokens.Length - 1:
@@ -124,6 +140,7 @@ public static class WordsToNumberConverter
 					continue;
 			}
 
+			// Since there's no match for "milhão", "bilião", "trilião", etc., we add "Um" which is mapped
 			token = IsToJoinOne(token) ? $"{WrittenNumbers.One} {token}" : token;
 
 			var numberHasIncorrectOrNoSeparator =
@@ -139,7 +156,8 @@ public static class WordsToNumberConverter
 			if (numberHasIncorrectOrNoSeparator || numberIsInIncorrectShortScaleFormat)
 				return Messages.InvalidNumber;
 
-			long? number = useShortScale
+			// Attempt to find a match
+			number = useShortScale
 				? WordsToNumberMap.Resolve(token) ?? WordsToNumberMapShorScale.Resolve(token)
 				: WordsToNumberMap.Resolve(token) ?? WordsToNumberMapLongScale.Resolve(token);
 

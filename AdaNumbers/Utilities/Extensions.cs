@@ -44,7 +44,7 @@ public static class Extensions
 
 	public static NumberCategory Category(this long number)
 	{
-		NumberCategory result = NumberCategory.Unity;
+		var result = NumberCategory.Unity;
 
 		switch (number.NumberOfDigits())
 		{
@@ -81,14 +81,14 @@ public static class Extensions
 
 	public static byte Bridge(this long number)
 	{
-		byte numberOfDigits = number.NumberOfDigits();
+		var numberOfDigits = number.NumberOfDigits();
 
-		byte bridge = 1;
-
-		if (numberOfDigits is 5 or 8 or 11 or 14)
-			bridge = 2;
-		else if (numberOfDigits is 6 or 9 or 12 or 15)
-			bridge = 3;
+		byte bridge = numberOfDigits switch
+		{
+			5 or 8 or 11 or 14 => 2,
+			6 or 9 or 12 or 15 => 3,
+			_ => 1
+		};
 
 		return bridge;
 	}
