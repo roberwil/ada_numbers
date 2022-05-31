@@ -133,6 +133,7 @@ public static class WordsToNumberConverter
 
 			var numberIsInIncorrectShortScaleFormat =
 				useShortScale && cursor > 0 && cursor < stringTokens.Length - 1 &&
+				token == WrittenNumbers.Thousand &&
 				NotToCombineWithThousand.Contains(stringTokens[cursor + 1]);
 
 			if (numberHasIncorrectOrNoSeparator || numberIsInIncorrectShortScaleFormat)

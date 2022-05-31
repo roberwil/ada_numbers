@@ -204,7 +204,6 @@ public class WordsToNumberConverterTest
 	}
 
 	[TestMethod]
-	[Ignore]
 	public void ThousandMillionsShortScaleAreValid()
 	{
 		var numbers = new Dictionary<long, string>()
@@ -222,7 +221,7 @@ public class WordsToNumberConverterTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(number.ToString(), description.ToNumber());
+			Assert.AreEqual(number.ToString(), description.ToNumber(true));
 		}
 	}
 
@@ -249,7 +248,6 @@ public class WordsToNumberConverterTest
 	}
 
 	[TestMethod]
-	[Ignore]
 	public void BillionsShortScaleAreValid()
 	{
 		var numbers = new Dictionary<long, string>()
@@ -267,7 +265,7 @@ public class WordsToNumberConverterTest
 
 		foreach (var (number, description) in numbers)
 		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
+			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description, true)!);
 		}
 	}
 
