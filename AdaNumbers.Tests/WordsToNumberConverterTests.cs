@@ -220,7 +220,6 @@ public class WordsToNumberConverterTest
 		SimpleAssert(expected, actual);
 	}
 
-	[Ignore]
 	[DataTestMethod]
 	[DataRow(42.2, "Quarenta e Dois Vírgula Dois" )]
 	[DataRow(102.0, "Cento e Dois" )]
@@ -230,8 +229,8 @@ public class WordsToNumberConverterTest
 	[DataRow(902.982, "Novecentos e Dois Vírgula Novecentos e Oitenta e Dois" )]
 	[DataRow(100000.001, "Cem Mil Vírgula Zero Zero Um" )]
 	[DataRow(100123.100123, "Cem Mil Cento e Vinte e Três Vírgula Cem Mil Cento e Vinte e Três" )]
-	public void RandomNumbersDecimals(decimal expected, string actual)
+	public void RandomNumbersDecimals(double expected, string actual)
 	{
-		SimpleAssert(expected, actual);
+		SimpleAssert((decimal)expected, actual);
 	}
 }
