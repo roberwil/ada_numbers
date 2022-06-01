@@ -92,4 +92,34 @@ public static class Extensions
 
 		return bridge;
 	}
+
+	public static byte NumberOfDigits(this int number)
+	{
+		return NumberOfDigits(number);
+	}
+
+	public static NumberCategory Category(this int number)
+	{
+		return Category(number);
+	}
+
+	public static byte Bridge(this int number)
+	{
+		return Bridge(number);
+	}
+
+	public static byte NumberOfDigits(this byte number)
+	{
+		return NumberOfDigits(number);
+	}
+
+	public static NumberCategory Category(this byte number)
+	{
+		return Category(number);
+	}
+
+	public static byte Bridge(this byte number)
+	{
+		return Bridge(number);
+	}
 }
