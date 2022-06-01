@@ -16,9 +16,35 @@ public static class WordsToNumberConverter
 	public static string? Convert(string word, bool useShortScale = false)
 	{
 		// Let the word be ins cute format: no extra spaces, first letter in capital
-		word = Regex.Replace(word, "\\s+", " ");
+		word = Regex.Replace(word, "\\s+", " ").Trim();
 		word = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.Trim());
 
+		var wordsToConvert = word.Split($" {Separators.DecimalSeparator} ");
+
+		if (wordsToConvert.Length == 1)
+			wordsToConvert = word.Split($" {Separators.DecimalSeparatorAlternative} ");
+
+		switch (wordsToConvert.Length)
+		{
+			case 1:
+				return ResolveWord(word, useShortScale);
+			case 2:
+			{
+				var wholePart = ResolveWord(wordsToConvert.First(), useShortScale);
+				var decimalPart = ResolveWord(wordsToConvert.Last(), useShortScale);
+
+				if (wholePart == Messages.InvalidNumber || decimalPart == Messages.InvalidNumber)
+					return Messages.InvalidNumber;
+
+				return $"{wholePart}.{decimalPart}";
+			}
+			default:
+				return Messages.InvalidNumber;
+		}
+	}
+
+	private static string? ResolveWord(string word, bool useShortScale = false)
+	{
 		// Try to get a direct match from the map
 		var number = useShortScale
 			? WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapShorScale.Resolve(word)

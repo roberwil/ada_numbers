@@ -42,11 +42,11 @@ public static class NumberToWordsConverter
 
 		_useShortScale = useShortScale;
 
-		var integerPart = long.Parse(strIntegerPart);
+		var wholePart = long.Parse(strIntegerPart);
 		var decimalPart = long.Parse(strDecimalPart);
 
 		NumberTokens.Clear();
-		var result = ResolveNumber(integerPart);
+		var result = ResolveNumber(wholePart);
 
 		if (decimalPart == 0)
 			return result;
