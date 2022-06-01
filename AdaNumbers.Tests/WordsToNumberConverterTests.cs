@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Ada.Numbers.Converters;
@@ -8,315 +10,228 @@ namespace Ada.Numbers.Tests;
 [TestClass]
 public class WordsToNumberConverterTest
 {
-	[TestMethod]
-	public void UnitiesAreValid()
+	private void SimpleAssert(long expected, string actual, bool useShortScale = false)
 	{
-		var numbers = new Dictionary<int, string>()
-		{
-			{ 0, "Zero" },
-			{ 1, "Um" },
-			{ 2, "Dois" },
-			{ 3, "Três" },
-			{ 4, "Quatro" },
-			{ 5, "Cinco" },
-			{ 6, "Seis" },
-			{ 7, "Sete" },
-			{ 8, "Oito" },
-			{ 9, "Nove" }
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
-		}
+		Assert.AreEqual(expected.ToString(), useShortScale ? actual.ToNumber(true) : actual.ToNumber());
 	}
 
-	[TestMethod]
-	public void TensAreValid()
+	private void SimpleAssert(decimal expected, string actual, bool useShortScale = false)
 	{
-		var numbers = new Dictionary<int, string>()
-		{
-			{ 10, "Dez" },
-			{ 11, "Onze" },
-			{ 12, "Doze" },
-			{ 13, "Treze" },
-			{ 14, "Catorze" },
-			{ 15, "Quinze" },
-			{ 16, "Dezasseis" },
-			{ 17, "Dezassete" },
-			{ 18, "Dezoito" },
-			{ 19, "Dezanove" },
-
-			{ 20, "Vinte" },
-			{ 21, "Vinte e Um" },
-
-			{ 30, "Trinta" },
-			{ 32, "Trinta e Dois" },
-
-			{ 40, "Quarenta" },
-			{ 43, "Quarenta e Três" },
-
-			{ 50, "Cinquenta" },
-			{ 54, "Cinquenta e Quatro" },
-
-			{ 60, "Sessenta" },
-			{ 65, "Sessenta e Cinco" },
-
-			{ 70, "Setenta" },
-			{ 76, "Setenta e Seis" },
-
-			{ 80, "Oitenta" },
-			{ 87, "Oitenta e Sete" },
-
-			{ 90, "Noventa" },
-			{ 98, "Noventa e Oito" },
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), description.ToNumber());
-		}
+		Assert.AreEqual(expected.ToString(CultureInfo.InvariantCulture), useShortScale ? actual.ToNumber(true) : actual.ToNumber());
 	}
 
-	[TestMethod]
-	public void HundredsAreValid()
+	[DataTestMethod]
+	[DataRow(0, "Zero")]
+	[DataRow(1, "Um")]
+	[DataRow(2, "Dois")]
+	[DataRow(3, "Três")]
+	[DataRow(4, "Quatro")]
+	[DataRow(5, "Cinco")]
+	[DataRow(6, "Seis")]
+	[DataRow(7, "Sete")]
+	[DataRow(8, "Oito")]
+	[DataRow(9, "Nove")]
+	public void UnitiesAreValid(int expected, string actual)
 	{
-		var numbers = new Dictionary<int, string>()
-		{
-			{ 100, "Cem" },
-			{ 101, "Cento e Um" },
-			{ 111, "Cento e Onze" },
-			{ 121, "Cento e Vinte e Um" },
-
-			{ 200, "Duzentos" },
-			{ 202, "Duzentos e Dois" },
-			{ 212, "Duzentos e Doze" },
-			{ 222, "Duzentos e Vinte e Dois" },
-
-			{ 300, "Trezentos" },
-			{ 303, "Trezentos e Três" },
-			{ 313, "Trezentos e Treze" },
-			{ 333, "Trezentos e Trinta e Três" },
-
-			{ 400, "Quatrocentos" },
-			{ 404, "Quatrocentos e Quatro" },
-			{ 414, "Quatrocentos e Catorze" },
-			{ 444, "Quatrocentos e Quarenta e Quatro" },
-
-			{ 500, "Quinhentos" },
-			{ 505, "Quinhentos e Cinco" },
-			{ 515, "Quinhentos e Quinze" },
-			{ 555, "Quinhentos e Cinquenta e Cinco" },
-
-			{ 600, "Seiscentos" },
-			{ 606, "Seiscentos e Seis" },
-			{ 616, "Seiscentos e Dezasseis" },
-			{ 666, "Seiscentos e Sessenta e Seis" },
-
-			{ 700, "Setecentos" },
-			{ 707, "Setecentos e Sete" },
-			{ 717, "Setecentos e Dezassete" },
-			{ 777, "Setecentos e Setenta e Sete" },
-
-			{ 800, "Oitocentos" },
-			{ 808, "Oitocentos e Oito" },
-			{ 818, "Oitocentos e Dezoito" },
-			{ 888, "Oitocentos e Oitenta e Oito" },
-
-			{ 900, "Novecentos" },
-			{ 909, "Novecentos e Nove" },
-			{ 919, "Novecentos e Dezanove" },
-			{ 999, "Novecentos e Noventa e Nove" }
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
-		}
+		SimpleAssert(expected, actual);
 	}
 
-	[TestMethod]
-	public void ThousandsAreValid()
+	[DataTestMethod]
+	[DataRow(10, "Dez")]
+	[DataRow(11, "Onze")]
+	[DataRow(12, "Doze")]
+	[DataRow(13, "Treze")]
+	[DataRow(14, "Catorze")]
+	[DataRow(15, "Quinze")]
+	[DataRow(16, "Dezasseis")]
+	[DataRow(17, "Dezassete")]
+	[DataRow(18, "Dezoito")]
+	[DataRow(19, "Dezanove")]
+	[DataRow(20, "Vinte")]
+	[DataRow(21, "Vinte e Um")]
+	[DataRow(30, "Trinta")]
+	[DataRow(32, "Trinta e Dois")]
+	[DataRow(40, "Quarenta")]
+	[DataRow(43, "Quarenta e Três")]
+	[DataRow(50, "Cinquenta")]
+	[DataRow(54, "Cinquenta e Quatro")]
+	[DataRow(60, "Sessenta")]
+	[DataRow(65, "Sessenta e Cinco")]
+	[DataRow(70, "Setenta")]
+	[DataRow(76, "Setenta e Seis")]
+	[DataRow(80, "Oitenta")]
+	[DataRow(87, "Oitenta e Sete")]
+	[DataRow(90, "Noventa")]
+	[DataRow(98, "Noventa e Oito")]
+	public void TensAreValid(int expected, string actual)
 	{
-		var numbers = new Dictionary<long, string>()
-		{
-			{1000, "Mil"},
-			{1001, "Mil e Um"},
-			{1011, "Mil e Onze"},
-			{1111, "Mil Cento e Onze"},
-
-			{10000, "Dez Mil"},
-			{10001, "Dez Mil e Um"},
-			{34001, "Trinta e Quatro Mil e Um"},
-
-			{140000, "Cento e Quarenta Mil"},
-			{140001, "Cento e Quarenta Mil e Um"}
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
-		}
+		SimpleAssert(expected, actual);
 	}
 
-	[TestMethod]
-	public void MillionsAreValid()
+	[DataTestMethod]
+	[DataRow( 100, "Cem" )]
+	[DataRow( 101, "Cento e Um" )]
+	[DataRow( 111, "Cento e Onze" )]
+	[DataRow( 121, "Cento e Vinte e Um" )]
+	[DataRow( 200, "Duzentos" )]
+	[DataRow( 202, "Duzentos e Dois" )]
+	[DataRow( 212, "Duzentos e Doze" )]
+	[DataRow( 222, "Duzentos e Vinte e Dois" )]
+	[DataRow( 300, "Trezentos" )]
+	[DataRow( 303, "Trezentos e Três" )]
+	[DataRow( 313, "Trezentos e Treze" )]
+	[DataRow( 333, "Trezentos e Trinta e Três" )]
+	[DataRow( 400, "Quatrocentos" )]
+	[DataRow( 404, "Quatrocentos e Quatro" )]
+	[DataRow( 414, "Quatrocentos e Catorze" )]
+	[DataRow( 444, "Quatrocentos e Quarenta e Quatro" )]
+	[DataRow( 500, "Quinhentos" )]
+	[DataRow( 505, "Quinhentos e Cinco" )]
+	[DataRow( 515, "Quinhentos e Quinze" )]
+	[DataRow( 555, "Quinhentos e Cinquenta e Cinco" )]
+	[DataRow( 600, "Seiscentos" )]
+	[DataRow( 606, "Seiscentos e Seis" )]
+	[DataRow( 616, "Seiscentos e Dezasseis" )]
+	[DataRow( 666, "Seiscentos e Sessenta e Seis" )]
+	[DataRow( 700, "Setecentos" )]
+	[DataRow( 707, "Setecentos e Sete" )]
+	[DataRow( 717, "Setecentos e Dezassete" )]
+	[DataRow( 777, "Setecentos e Setenta e Sete" )]
+	[DataRow( 800, "Oitocentos" )]
+	[DataRow( 808, "Oitocentos e Oito" )]
+	[DataRow( 818, "Oitocentos e Dezoito" )]
+	[DataRow( 888, "Oitocentos e Oitenta e Oito" )]
+	[DataRow( 900, "Novecentos" )]
+	[DataRow( 909, "Novecentos e Nove" )]
+	[DataRow( 919, "Novecentos e Dezanove" )]
+	[DataRow( 999, "Novecentos e Noventa e Nove" )]
+	public void HundredsAreValid(int expected, string actual)
 	{
-		var numbers = new Dictionary<long, string>()
-		{
-			{1000000, "Um Milhão"},
-			{1000001, "Um Milhão e Um"},
-			{1000011, "Um Milhão e Onze"},
-			{1000022, "Um Milhão e Vinte e Dois"},
-			{1000122, "Um Milhão Cento e Vinte e Dois"},
-			{2000122, "Dois Milhões Cento e Vinte e Dois"},
-
-			{20000122, "Vinte Milhões Cento e Vinte e Dois"},
-			{22000122, "Vinte e Dois Milhões Cento e Vinte e Dois"},
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
-		}
+		SimpleAssert(expected, actual);
 	}
 
-	[TestMethod]
-	public void ThousandMillionsAreValid()
+	[DataTestMethod]
+	[DataRow(1000, "Mil")]
+	[DataRow(1001, "Mil e Um")]
+	[DataRow(1011, "Mil e Onze")]
+	[DataRow(1111, "Mil Cento e Onze")]
+	[DataRow(10000, "Dez Mil")]
+	[DataRow(10001, "Dez Mil e Um")]
+	[DataRow(34001, "Trinta e Quatro Mil e Um")]
+	[DataRow(140000, "Cento e Quarenta Mil")]
+	[DataRow(140001, "Cento e Quarenta Mil e Um")]
+	public void ThousandsAreValid(int expected, string actual)
 	{
-		var numbers = new Dictionary<long, string>()
-		{
-			{1000000000, "Mil Milhões"},
-			{1000000001, "Mil Milhões e Um"},
-			{1000000011, "Mil Milhões e Onze"},
-			{1000000022, "Mil Milhões e Vinte e Dois"},
-			{1000000122, "Mil Milhões Cento e Vinte e Dois"},
-			{2000000122, "Dois Mil Milhões Cento e Vinte e Dois"},
-
-			{20000000122, "Vinte Mil Milhões Cento e Vinte e Dois"},
-			{22000000122, "Vinte e Dois Mil Milhões Cento e Vinte e Dois"},
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
-		}
+		SimpleAssert(expected, actual);
 	}
 
-	[TestMethod]
-	public void ThousandMillionsShortScaleAreValid()
+	[DataTestMethod]
+	[DataRow(1000000, "Um Milhão")]
+	[DataRow(1000001, "Um Milhão e Um")]
+	[DataRow(1000011, "Um Milhão e Onze")]
+	[DataRow(1000022, "Um Milhão e Vinte e Dois")]
+	[DataRow(1000122, "Um Milhão Cento e Vinte e Dois")]
+	[DataRow(2000122, "Dois Milhões Cento e Vinte e Dois")]
+	[DataRow(20000122, "Vinte Milhões Cento e Vinte e Dois")]
+	[DataRow(22000122, "Vinte e Dois Milhões Cento e Vinte e Dois")]
+	public void MillionsAreValid(int expected, string actual)
 	{
-		var numbers = new Dictionary<long, string>()
-		{
-			{1000000000, "Um Bilião"},
-			{1000000001, "Um Bilião e Um"},
-			{1000000011, "Um Bilião e Onze"},
-			{1000000022, "Um Bilião e Vinte e Dois"},
-			{1000000122, "Um Bilião Cento e Vinte e Dois"},
-			{2000000122, "Dois Biliões Cento e Vinte e Dois"},
-
-			{20000000122, "Vinte Biliões Cento e Vinte e Dois"},
-			{22000000122, "Vinte e Dois Biliões Cento e Vinte e Dois"},
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), description.ToNumber(true));
-		}
+		SimpleAssert(expected, actual);
 	}
 
-	[TestMethod]
-	public void BillionsAreValid()
+	[DataTestMethod]
+	[DataRow(1000000000, "Mil Milhões")]
+	[DataRow(1000000001, "Mil Milhões e Um")]
+	[DataRow(1000000011, "Mil Milhões e Onze")]
+	[DataRow(1000000022, "Mil Milhões e Vinte e Dois")]
+	[DataRow(1000000122, "Mil Milhões Cento e Vinte e Dois")]
+	[DataRow(2000000122, "Dois Mil Milhões Cento e Vinte e Dois")]
+	[DataRow(20000000122, "Vinte Mil Milhões Cento e Vinte e Dois")]
+	[DataRow(22000000122, "Vinte e Dois Mil Milhões Cento e Vinte e Dois")]
+
+	public void ThousandMillionsAreValid(long expected, string actual)
 	{
-		var numbers = new Dictionary<long, string>()
-		{
-			{1000000000000, "Um Bilião"},
-			{1000000000001, "Um Bilião e Um"},
-			{1000000000011, "Um Bilião e Onze"},
-			{1000000000022, "Um Bilião e Vinte e Dois"},
-			{1000000000122, "Um Bilião Cento e Vinte e Dois"},
-			{2000000000122, "Dois Biliões Cento e Vinte e Dois"},
-
-			{20000000000122, "Vinte Biliões Cento e Vinte e Dois"},
-			{22000000000122, "Vinte e Dois Biliões Cento e Vinte e Dois"},
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), description.ToNumber());
-		}
+		SimpleAssert(expected, actual);
 	}
 
-	[TestMethod]
-	public void BillionsShortScaleAreValid()
+	[DataTestMethod]
+	[DataRow(1000000000, "Um Bilião")]
+	[DataRow(1000000001, "Um Bilião e Um")]
+	[DataRow(1000000011, "Um Bilião e Onze")]
+	[DataRow(1000000022, "Um Bilião e Vinte e Dois")]
+	[DataRow(1000000122, "Um Bilião Cento e Vinte e Dois")]
+	[DataRow(2000000122, "Dois Biliões Cento e Vinte e Dois")]
+	[DataRow(20000000122, "Vinte Biliões Cento e Vinte e Dois")]
+	[DataRow(22000000122, "Vinte e Dois Biliões Cento e Vinte e Dois")]
+	public void ThousandMillionsShortScaleAreValid(long expected, string actual)
 	{
-		var numbers = new Dictionary<long, string>()
-		{
-			{1000000000000, "Um Trilião"},
-			{1000000000001, "Um Trilião e Um"},
-			{1000000000011, "Um Trilião e Onze"},
-			{1000000000022, "Um Trilião e Vinte e Dois"},
-			{1000000000122, "Um Trilião Cento e Vinte e Dois"},
-			{2000000000122, "Dois Triliões Cento e Vinte e Dois"},
-
-			{20000000000122, "Vinte Triliões Cento e Vinte e Dois"},
-			{22000000000122, "Vinte e Dois Triliões Cento e Vinte e Dois"},
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description, true)!);
-		}
+		SimpleAssert(expected, actual, true);
 	}
 
-	[TestMethod]
-	public void RandomNumbersIntegers()
-	{
-		var numbers = new Dictionary<int, string>()
-		{
-			{ 42, "Quarenta e Dois" },
-			{ 102, "Cento e Dois" },
-			{ 113, "Cento e Treze" },
-			{ 123, "Cento e Vinte e Três" },
-			{ 902, "Novecentos e Dois" },
-			{ 99, "Noventa e Nove" },
-			{ 999, "Novecentos e Noventa e Nove" },
-			{ 1000, "Mil" },
-			{ 1123, "Mil Cento e Vinte e Três" },
-			{ 30000, "Trinta Mil" },
-			{ 10123, "Dez Mil Cento e Vinte e Três" },
-			{ 21123, "Vinte e Um Mil Cento e Vinte e Três" },
-			{ 100000, "Cem Mil" },
-			{ 100123, "Cem Mil Cento e Vinte e Três" },
-			{ 112123, "Cento e Doze Mil Cento e Vinte e Três" },
-			{ 134123, "Cento e Trinta e Quatro Mil Cento e Vinte e Três" }
-		};
+	[DataTestMethod]
+	[DataRow(1000000000000, "Um Bilião")]
+	[DataRow(1000000000001, "Um Bilião e Um")]
+	[DataRow(1000000000011, "Um Bilião e Onze")]
+	[DataRow(1000000000022, "Um Bilião e Vinte e Dois")]
+	[DataRow(1000000000122, "Um Bilião Cento e Vinte e Dois")]
+	[DataRow(2000000000122, "Dois Biliões Cento e Vinte e Dois")]
+	[DataRow(20000000000122, "Vinte Biliões Cento e Vinte e Dois")]
+	[DataRow(22000000000122, "Vinte e Dois Biliões Cento e Vinte e Dois")]
 
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(number.ToString(), WordsToNumberConverter.Convert(description)!);
-		}
+	public void BillionsAreValid(long expected, string actual)
+	{
+		SimpleAssert(expected, actual);
 	}
 
-	[TestMethod]
+	[DataTestMethod]
+	[DataRow(1000000000000, "Um Trilião")]
+	[DataRow(1000000000001, "Um Trilião e Um")]
+	[DataRow(1000000000011, "Um Trilião e Onze")]
+	[DataRow(1000000000022, "Um Trilião e Vinte e Dois")]
+	[DataRow(1000000000122, "Um Trilião Cento e Vinte e Dois")]
+	[DataRow(2000000000122, "Dois Triliões Cento e Vinte e Dois")]
+	[DataRow(20000000000122, "Vinte Triliões Cento e Vinte e Dois")]
+	[DataRow(22000000000122, "Vinte e Dois Triliões Cento e Vinte e Dois")]
+
+	public void BillionsShortScaleAreValid(long expected, string actual)
+	{
+		SimpleAssert(expected, actual, true);
+	}
+
+	[DataTestMethod]
+	[DataRow(42, "Quarenta e Dois" )]
+	[DataRow(102, "Cento e Dois" )]
+	[DataRow(113, "Cento e Treze" )]
+	[DataRow(123, "Cento e Vinte e Três" )]
+	[DataRow(902, "Novecentos e Dois" )]
+	[DataRow(99, "Noventa e Nove" )]
+	[DataRow(999, "Novecentos e Noventa e Nove" )]
+	[DataRow(1000, "Mil" )]
+	[DataRow(1123, "Mil Cento e Vinte e Três" )]
+	[DataRow(30000, "Trinta Mil" )]
+	[DataRow(10123, "Dez Mil Cento e Vinte e Três" )]
+	[DataRow(21123, "Vinte e Um Mil Cento e Vinte e Três" )]
+	[DataRow(100000, "Cem Mil" )]
+	[DataRow(100123, "Cem Mil Cento e Vinte e Três" )]
+	[DataRow(112123, "Cento e Doze Mil Cento e Vinte e Três" )]
+	[DataRow(134123, "Cento e Trinta e Quatro Mil Cento e Vinte e Três" )]
+	public void RandomNumbersIntegers(int expected, string actual)
+	{
+		SimpleAssert(expected, actual);
+	}
+
 	[Ignore]
-	public void RandomNumbersDecimals()
+	[DataTestMethod]
+	[DataRow(42.2, "Quarenta e Dois Vírgula Dois" )]
+	[DataRow(102.0, "Cento e Dois" )]
+	[DataRow(103.000, "Cento e Três" )]
+	[DataRow(113.02, "Cento e Treze Vírgula Zero Dois" )]
+	[DataRow(123.0045, "Cento e Vinte e Três Vírgula Zero Zero Quarenta e Cinco" )]
+	[DataRow(902.982, "Novecentos e Dois Vírgula Novecentos e Oitenta e Dois" )]
+	[DataRow(100000.001, "Cem Mil Vírgula Zero Zero Um" )]
+	[DataRow(100123.100123, "Cem Mil Cento e Vinte e Três Vírgula Cem Mil Cento e Vinte e Três" )]
+	public void RandomNumbersDecimals(decimal expected, string actual)
 	{
-		var numbers = new Dictionary<decimal, string>()
-		{
-			{ 42.2m, "Quarenta e Dois Vírgula Dois" },
-			{ 102.0m, "Cento e Dois" },
-			{ 103.000m, "Cento e Três" },
-			{ 113.02m, "Cento e Treze Vírgula Zero Dois" },
-			{ 123.0045m, "Cento e Vinte e Três Vírgula Zero Zero Quarenta e Cinco" },
-			{ 902.982m, "Novecentos e Dois Vírgula Novecentos e Oitenta e Dois" },
-			{ 100000.001m, "Cem Mil Vírgula Zero Zero Um" },
-			{ 100123.100123m, "Cem Mil Cento e Vinte e Três Vírgula Cem Mil Cento e Vinte e Três" }
-		};
-
-		foreach (var (number, description) in numbers)
-		{
-			Assert.AreEqual(description, number.ToWords());
-		}
+		SimpleAssert(expected, actual);
 	}
 }
