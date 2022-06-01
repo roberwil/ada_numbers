@@ -7,96 +7,6 @@ namespace Ada.Numbers.Converters;
 
 public static class WordsToNumberConverter
 {
-	private const string NumbersSeparator = "E";
-
-	private static readonly Dictionary<string, long> WordsToNumberMap = new()
-	{
-		{ WrittenNumbers.Zero, 0 },
-		{ WrittenNumbers.One, 1 },
-		{ WrittenNumbers.Two, 2 },
-		{ WrittenNumbers.Three, 3 },
-		{ WrittenNumbers.Four, 4 },
-		{ WrittenNumbers.Five, 5 },
-		{ WrittenNumbers.Six, 6 },
-		{ WrittenNumbers.Seven, 7 },
-		{ WrittenNumbers.Eight, 8 },
-		{ WrittenNumbers.Nine, 9 },
-		{ WrittenNumbers.Ten, 10 },
-		{ WrittenNumbers.Eleven, 11 },
-		{ WrittenNumbers.Twelve, 12 },
-		{ WrittenNumbers.Thirteen, 13 },
-		{ WrittenNumbers.Fourteen, 14 },
-		{ WrittenNumbers.Fifteen, 15 },
-		{ WrittenNumbers.Sixteen, 16 },
-		{ WrittenNumbers.Seventeen, 17 },
-		{ WrittenNumbers.Eighteen, 18 },
-		{ WrittenNumbers.Nineteen, 19 },
-		{ WrittenNumbers.Twenty, 20 },
-		{ WrittenNumbers.Thirty, 30 },
-		{ WrittenNumbers.Forty, 40 },
-		{ WrittenNumbers.Fifty, 50 },
-		{ WrittenNumbers.Sixty, 60 },
-		{ WrittenNumbers.Seventy, 70 },
-		{ WrittenNumbers.Eighty, 80 },
-		{ WrittenNumbers.Ninety, 90 },
-		{ WrittenNumbers.OneHundred, 100 },
-		{ WrittenNumbers.OneHundredSingle, 100 },
-		{ WrittenNumbers.TwoHundred, 200 },
-		{ WrittenNumbers.ThreeHundred, 300 },
-		{ WrittenNumbers.FourHundred, 400 },
-		{ WrittenNumbers.FiveHundred, 500 },
-		{ WrittenNumbers.SixHundred, 600 },
-		{ WrittenNumbers.SevenHundred, 700 },
-		{ WrittenNumbers.EightHundred, 800 },
-		{ WrittenNumbers.NineHundred, 900 },
-		{ WrittenNumbers.Thousand, (long)1e3 },
-		{ WrittenNumbers.MillionSingular, (long)1e6 },
-		{ WrittenNumbers.MillionPlural, (long)1e6 }
-	};
-
-	private static readonly Dictionary<string, long> WordsToNumberMapLongScale = new()
-	{
-		{ WrittenNumbers.ThousandMillion, (long)1e9 },
-		{ WrittenNumbers.BillionSingular, (long)1e12 },
-		{ WrittenNumbers.BillionPlural, (long)1e12 }
-	};
-
-	private static readonly Dictionary<string, long> WordsToNumberMapShorScale = new()
-	{
-		{ WrittenNumbers.BillionSingular, (long)1e9 },
-		{ WrittenNumbers.BillionPlural, (long)1e9 },
-		{ WrittenNumbers.TrillionSingular, (long)1e12 },
-		{ WrittenNumbers.TrillionPlural, (long)1e12 }
-	};
-
-	private static readonly List<string> NotToCombineWithThousand = new()
-	{
-		WrittenNumbers.MillionSingular,
-		WrittenNumbers.BillionPlural,
-		WrittenNumbers.TrillionPlural
-	};
-
-	private static readonly List<string> NumbersThatIgnoreSeparator = new()
-	{
-		WrittenNumbers.OneHundred,
-		WrittenNumbers.TwoHundred,
-		WrittenNumbers.ThreeHundred,
-		WrittenNumbers.FourHundred,
-		WrittenNumbers.FiveHundred,
-		WrittenNumbers.SixHundred,
-		WrittenNumbers.SevenHundred,
-		WrittenNumbers.EightHundred,
-		WrittenNumbers.NineHundred,
-		WrittenNumbers.Thousand,
-		WrittenNumbers.MillionSingular,
-		WrittenNumbers.MillionPlural,
-		WrittenNumbers.ThousandMillion,
-		WrittenNumbers.BillionSingular,
-		WrittenNumbers.BillionPlural,
-		WrittenNumbers.TrillionSingular,
-		WrittenNumbers.TrillionPlural
-	};
-
 	/// <summary>
 	/// Converts a word, i.e. "cento e vinte e dois", to "122"
 	/// </summary>
@@ -111,8 +21,8 @@ public static class WordsToNumberConverter
 
 		// Try to get a direct match from the map
 		var number = useShortScale
-			? WordsToNumberMap.Resolve(word) ?? WordsToNumberMapShorScale.Resolve(word)
-			: WordsToNumberMap.Resolve(word) ?? WordsToNumberMapLongScale.Resolve(word);
+			? WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapShorScale.Resolve(word)
+			: WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapLongScale.Resolve(word);
 
 		if (number is not null)
 			return number.ToString();
@@ -132,11 +42,11 @@ public static class WordsToNumberConverter
 			// Check if separator is used correctly or is repeated
 			switch (token)
 			{
-				case NumbersSeparator when cursor == 0 || cursor == stringTokens.Length - 1:
-				case NumbersSeparator when NumbersThatIgnoreSeparator.Contains(stringTokens[cursor + 1]):
-				case NumbersSeparator when cursor > 0 && stringTokens[cursor - 1] == NumbersSeparator:
+				case Separators.NumbersSeparator when cursor == 0 || cursor == stringTokens.Length - 1:
+				case Separators.NumbersSeparator when WrittenNumbers.NumbersThatIgnoreSeparator.Contains(stringTokens[cursor + 1]):
+				case Separators.NumbersSeparator when cursor > 0 && stringTokens[cursor - 1] == Separators.NumbersSeparator:
 					return Messages.InvalidNumber;
-				case NumbersSeparator:
+				case Separators.NumbersSeparator:
 					continue;
 			}
 
@@ -145,21 +55,21 @@ public static class WordsToNumberConverter
 
 			var numberHasIncorrectOrNoSeparator =
 				cursor > 0 &&
-				!NumbersThatIgnoreSeparator.Contains(token) &&
-				stringTokens[cursor - 1] != NumbersSeparator;
+				!WrittenNumbers.NumbersThatIgnoreSeparator.Contains(token) &&
+				stringTokens[cursor - 1] != Separators.NumbersSeparator;
 
 			var numberIsInIncorrectShortScaleFormat =
 				useShortScale && cursor > 0 && cursor < stringTokens.Length - 1 &&
 				token == WrittenNumbers.Thousand &&
-				NotToCombineWithThousand.Contains(stringTokens[cursor + 1]);
+				WrittenNumbers.NotToCombineWithThousand.Contains(stringTokens[cursor + 1]);
 
 			if (numberHasIncorrectOrNoSeparator || numberIsInIncorrectShortScaleFormat)
 				return Messages.InvalidNumber;
 
 			// Attempt to find a match
 			number = useShortScale
-				? WordsToNumberMap.Resolve(token) ?? WordsToNumberMapShorScale.Resolve(token)
-				: WordsToNumberMap.Resolve(token) ?? WordsToNumberMapLongScale.Resolve(token);
+				? WrittenNumbers.WordsToNumberMap.Resolve(token) ?? WrittenNumbers.WordsToNumberMapShorScale.Resolve(token)
+				: WrittenNumbers.WordsToNumberMap.Resolve(token) ?? WrittenNumbers.WordsToNumberMapLongScale.Resolve(token);
 
 			if (number is null)
 				return Messages.InvalidNumber;
