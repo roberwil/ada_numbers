@@ -30,13 +30,21 @@ public static class WordsToNumberConverter
 				return ResolveWord(word, useShortScale);
 			case 2:
 			{
+				var countZeros = wordsToConvert.Last().Split().Select(w => w)
+					.Count(w => w == WrittenNumbers.Zero);
+
 				var wholePart = ResolveWord(wordsToConvert.First(), useShortScale);
-				var decimalPart = ResolveWord(wordsToConvert.Last(), useShortScale);
+				var decimalPart = ResolveWord(wordsToConvert.Last().Replace(WrittenNumbers.Zero, ""), useShortScale);
 
 				if (wholePart == Messages.InvalidNumber || decimalPart == Messages.InvalidNumber)
 					return Messages.InvalidNumber;
 
-				return $"{wholePart}.{decimalPart}";
+				if (countZeros > 0)
+					decimalPart = $"{new string('0', countZeros)}{decimalPart}";
+
+				var number = $"{wholePart}.{decimalPart}";
+
+				return number;
 			}
 			default:
 				return Messages.InvalidNumber;
@@ -45,6 +53,8 @@ public static class WordsToNumberConverter
 
 	private static string? ResolveWord(string word, bool useShortScale = false)
 	{
+		word = Regex.Replace(word, "\\s+", " ").Trim();
+
 		// Try to get a direct match from the map
 		var number = useShortScale
 			? WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapShorScale.Resolve(word)
