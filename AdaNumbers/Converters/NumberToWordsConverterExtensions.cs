@@ -1,7 +1,3 @@
-using System.Globalization;
-using Ada.Numbers.Utilities;
-using Ada.Numbers.Constants;
-
 namespace Ada.Numbers.Converters;
 
 public static class NumberToWordsConverterExtensions

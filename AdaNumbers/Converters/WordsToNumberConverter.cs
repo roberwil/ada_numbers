@@ -7,126 +7,117 @@ namespace Ada.Numbers.Converters;
 
 public static class WordsToNumberConverter
 {
-	private const string NumbersSeparator = "e";
-	private static readonly Dictionary<string, long> WordsToNumberMap = new()
+	/// <summary>
+	/// Converts a word, i.e. "cento e vinte e dois", to "122"
+	/// </summary>
+	/// <param name="word"> The word to be converted</param>
+	/// <param name="useShortScale"> Use short scale numbering</param>
+	/// <returns>The string which corresponds to the number of the converted word or "InvalidNumber"</returns>
+	public static string? Convert(string word, bool useShortScale = false)
 	{
-		{ WrittenNumbers.Zero, 0 },
-		{ WrittenNumbers.One, 1 },
-		{ WrittenNumbers.Two, 2 },
-		{ WrittenNumbers.Three, 3 },
-		{ WrittenNumbers.Four, 4 },
-		{ WrittenNumbers.Five, 5 },
-		{ WrittenNumbers.Six, 6 },
-		{ WrittenNumbers.Seven, 7 },
-		{ WrittenNumbers.Eight, 8 },
-		{ WrittenNumbers.Nine, 9 },
-		{ WrittenNumbers.Ten, 10 },
-		{ WrittenNumbers.Eleven, 11 },
-		{ WrittenNumbers.Twelve, 12 },
-		{ WrittenNumbers.Thirteen, 13 },
-		{ WrittenNumbers.Fourteen, 14 },
-		{ WrittenNumbers.Fifteen, 15 },
-		{ WrittenNumbers.Sixteen, 16 },
-		{ WrittenNumbers.Seventeen, 17 },
-		{ WrittenNumbers.Eighteen, 18 },
-		{ WrittenNumbers.Nineteen, 19 },
-		{ WrittenNumbers.Twenty, 20 },
-		{ WrittenNumbers.Thirty, 30 },
-		{ WrittenNumbers.Forty, 40 },
-		{ WrittenNumbers.Fifty, 50 },
-		{ WrittenNumbers.Sixty, 60 },
-		{ WrittenNumbers.Seventy, 70 },
-		{ WrittenNumbers.Eighty, 80 },
-		{ WrittenNumbers.Ninety, 90 },
-		{ WrittenNumbers.OneHundred, 100 },
-		{ WrittenNumbers.OneHundredSingle, 100 },
-		{ WrittenNumbers.TwoHundred, 200 },
-		{ WrittenNumbers.ThreeHundred, 300 },
-		{ WrittenNumbers.FourHundred, 400 },
-		{ WrittenNumbers.FiveHundred, 500 },
-		{ WrittenNumbers.SixHundred, 600 },
-		{ WrittenNumbers.SevenHundred, 700 },
-		{ WrittenNumbers.EightHundred, 800 },
-		{ WrittenNumbers.NineHundred, 900 },
-		{ WrittenNumbers.Thousand, (long)1e3 },
-		{ WrittenNumbers.MillionSingular, (long)1e6 },
-		{ WrittenNumbers.MillionPlural, (long)1e6 },
-		{ WrittenNumbers.ThousandMillion, (long)1e9 },
-		{ WrittenNumbers.BillionSingular, (long)1e12 },
-		{ WrittenNumbers.BillionPlural, (long)1e12 }
-	};
+		// Let the word be ins cute format: no extra spaces, first letter in capital
+		word = Regex.Replace(word, "\\s+", " ").Trim();
+		word = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.Trim());
 
-	private static readonly List<string> NumbersThatIgnoreSeparator = new()
+		// Check whether the number has a decimal part (length of 2)
+		var wordsToConvert = word.Split($" {Separators.DecimalSeparator} ");
+
+		if (wordsToConvert.Length == 1)
+			wordsToConvert = word.Split($" {Separators.DecimalSeparatorAlternative} ");
+
+		switch (wordsToConvert.Length)
+		{
+			case 1:
+				return ResolveWord(word, useShortScale);
+			case 2:
+			{
+				var countZeros = wordsToConvert.Last().Split().Select(w => w)
+					.Count(w => w == WrittenNumbers.Zero);
+
+				var wholePart = ResolveWord(wordsToConvert.First(), useShortScale);
+				var decimalPart = ResolveWord(wordsToConvert.Last().Replace(WrittenNumbers.Zero, ""), useShortScale);
+
+				if (wholePart == Messages.InvalidNumber || decimalPart == Messages.InvalidNumber)
+					return Messages.InvalidNumber;
+
+				if (countZeros > 0)
+					decimalPart = $"{new string('0', countZeros)}{decimalPart}";
+
+				var number = $"{wholePart}.{decimalPart}";
+
+				return number;
+			}
+			default:
+				return Messages.InvalidNumber;
+		}
+	}
+
+	private static string? ResolveWord(string word, bool useShortScale = false)
 	{
-		WrittenNumbers.OneHundred,
-		WrittenNumbers.TwoHundred,
-		WrittenNumbers.ThreeHundred,
-		WrittenNumbers.FourHundred,
-		WrittenNumbers.FiveHundred,
-		WrittenNumbers.SixHundred,
-		WrittenNumbers.SevenHundred,
-		WrittenNumbers.EightHundred,
-		WrittenNumbers.NineHundred,
-		WrittenNumbers.Thousand,
-		WrittenNumbers.MillionSingular,
-		WrittenNumbers.MillionPlural,
-		WrittenNumbers.ThousandMillion,
-		WrittenNumbers.BillionSingular,
-		WrittenNumbers.BillionPlural,
-		WrittenNumbers.TrillionSingular,
-		WrittenNumbers.TrillionPlural
-	};
+		word = Regex.Replace(word, "\\s+", " ").Trim();
 
-	public static string? Convert(string words)
-	{
-		words = Regex.Replace(words, "\\s+", " ");
-		var info = CultureInfo.CurrentCulture.TextInfo;
-		var result = WordsToNumberMap.Resolve(info.ToTitleCase(words));
+		// Try to get a direct match from the map
+		var number = useShortScale
+			? WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapShorScale.Resolve(word)
+			: WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapLongScale.Resolve(word);
 
-		if (result is not null)
-			return result.ToString();
+		if (number is not null)
+			return number.ToString();
 
-		string[] stringTokens = words.Split(" ");
+		// It was not found a direct match, so, let's find that bastard
+		string[] stringTokens = word.Split(" ");
 		Stack<long?> numericTokens = new();
 
+		// The algorithm consists on iterating every token so that to find its direct match
+		// in the map and then stack it up. If the next number to be stacked requires a multiplier,
+		// we find it and stack it up after popping the later numbers. When all the matches are found
+		// The number is their sum
 		for (var cursor = 0; cursor < stringTokens.Length; cursor++)
 		{
 			var token = stringTokens[cursor];
 
+			// Check if separator is used correctly or is repeated
 			switch (token)
 			{
-				case NumbersSeparator when cursor == 0 || cursor == stringTokens.Length - 1:
-				case NumbersSeparator when NumbersThatIgnoreSeparator.Contains(stringTokens[cursor+1]) || stringTokens[cursor+1] == "":
-				case NumbersSeparator when cursor > 0 && stringTokens[cursor - 1] == NumbersSeparator:
+				case Separators.NumbersSeparator when cursor == 0 || cursor == stringTokens.Length - 1:
+				case Separators.NumbersSeparator when WrittenNumbers.NumbersThatIgnoreSeparator.Contains(stringTokens[cursor + 1]):
+				case Separators.NumbersSeparator when cursor > 0 && stringTokens[cursor - 1] == Separators.NumbersSeparator:
 					return Messages.InvalidNumber;
-				case NumbersSeparator:
+				case Separators.NumbersSeparator:
 					continue;
 			}
 
-			var currentToken = token;
+			// Since there's no match for "milhão", "bilião", "trilião", etc., we add "Um" which is mapped
+			token = IsToJoinOne(token) ? $"{WrittenNumbers.One} {token}" : token;
 
-			if (IsToJoinOne(token))
-				currentToken = $"{WrittenNumbers.One} {token}";
+			var numberHasIncorrectOrNoSeparator =
+				cursor > 0 &&
+				!WrittenNumbers.NumbersThatIgnoreSeparator.Contains(token) &&
+				stringTokens[cursor - 1] != Separators.NumbersSeparator;
 
-			if (cursor > 0 && !NumbersThatIgnoreSeparator.Contains(currentToken) && stringTokens[cursor-1] != NumbersSeparator)
+			var numberIsInIncorrectShortScaleFormat =
+				useShortScale && cursor > 0 && cursor < stringTokens.Length - 1 &&
+				token == WrittenNumbers.Thousand &&
+				WrittenNumbers.NotToCombineWithThousand.Contains(stringTokens[cursor + 1]);
+
+			if (numberHasIncorrectOrNoSeparator || numberIsInIncorrectShortScaleFormat)
 				return Messages.InvalidNumber;
 
-			var number = WordsToNumberMap.Resolve(currentToken);
+			// Attempt to find a match
+			number = useShortScale
+				? WrittenNumbers.WordsToNumberMap.Resolve(token) ?? WrittenNumbers.WordsToNumberMapShorScale.Resolve(token)
+				: WrittenNumbers.WordsToNumberMap.Resolve(token) ?? WrittenNumbers.WordsToNumberMapLongScale.Resolve(token);
 
-			if (number is not null)
-			{
-				if (IsToComputeMultiplier(currentToken, numericTokens.Count))
-				{
-					var multiplier = FindMultiplier(ref numericTokens);
-					number *= multiplier;
-				}
-
-				numericTokens.Push(number);
-			}
-			else
-			{
+			if (number is null)
 				return Messages.InvalidNumber;
+
+			if (IsToComputeMultiplier(token, numericTokens.Count))
+			{
+				var multiplier = FindMultiplier(ref numericTokens);
+				number *= multiplier;
 			}
+
+			numericTokens.Push(number);
 		}
 
 		return numericTokens.Sum().ToString();
@@ -134,12 +125,10 @@ public static class WordsToNumberConverter
 
 	private static bool IsToJoinOne(string token)
 	{
-		if (token is WrittenNumbers.One or WrittenNumbers.Thousand)
-			return false;
-
-		return WrittenNumbers.MillionSingular.Contains(token) ||
-		       WrittenNumbers.BillionSingular.Contains(token) ||
-		       WrittenNumbers.TrillionSingular.Contains(token);
+		return token is not (WrittenNumbers.One or WrittenNumbers.Thousand) &&
+		       (WrittenNumbers.MillionSingular.Contains(token) ||
+		        WrittenNumbers.BillionSingular.Contains(token) ||
+		        WrittenNumbers.TrillionSingular.Contains(token));
 	}
 
 	private static bool IsToComputeMultiplier(string token, int numberOfNumericTokens)
@@ -147,7 +136,6 @@ public static class WordsToNumberConverter
 		return (token is WrittenNumbers.Thousand or
 			       WrittenNumbers.MillionSingular or
 			       WrittenNumbers.MillionPlural or
-			       WrittenNumbers.ThousandMillion or
 			       WrittenNumbers.BillionSingular or
 			       WrittenNumbers.BillionPlural or
 			       WrittenNumbers.TrillionSingular or
