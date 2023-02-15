@@ -98,7 +98,7 @@ public static class Extensions
 		return result;
 	}
 
-	internal static byte Bridge(this long number)
+	public static byte Bridge(this long number)
 	{
 		var numberOfDigits = number.NumberOfDigits();
 
