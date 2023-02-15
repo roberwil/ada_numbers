@@ -4,13 +4,13 @@ using Ada.Numbers.Constants;
 
 namespace Ada.Numbers.Converters;
 
-public static class NumberToWordsConverter
+internal static class NumberToWordsConverter
 {
 	private const byte Limit = 15;
 	private static bool _useShortScale;
 	private static readonly List<string> NumberTokens = new();
 
-	public static string Convert(long number, bool useShortScale = false)
+	internal static string Convert(long number, bool useShortScale = false)
 	{
 		if (number.NumberOfDigits() > Limit)
 			return Messages.Unsupported;
@@ -21,17 +21,17 @@ public static class NumberToWordsConverter
 		return ResolveNumber(number);
 	}
 
-	public static string Convert(int number, bool useShortScale = false)
+	internal static string Convert(int number, bool useShortScale = false)
 	{
 		return Convert((long)number, useShortScale);
 	}
 
-	public static string Convert(byte number, bool useShortScale = false)
+	internal static string Convert(byte number, bool useShortScale = false)
 	{
 		return Convert((long)number, useShortScale);
   }
 
-	public static string Convert(decimal number, bool useShortScale = false)
+	internal static string Convert(decimal number, bool useShortScale = false)
 	{
 		var strNumber = number.
 			ToString(CultureInfo.InvariantCulture).
@@ -64,17 +64,17 @@ public static class NumberToWordsConverter
 		return result;
 	}
 
-	public static string Convert(double number, bool useShortScale = false)
+	internal static string Convert(double number, bool useShortScale = false)
 	{
 		return Convert((decimal)number, useShortScale);
 	}
 
-	public static string Convert(float number, bool useShortScale = false)
+	internal static string Convert(float number, bool useShortScale = false)
 	{
 		return Convert((decimal)number, useShortScale);
 	}
 
-	private static string ResolveNumber(long number, bool flag = false)
+	internal static string ResolveNumber(long number, bool flag = false)
 	{
 		var result = string.Empty;
 		var numberCategory = number.Category();

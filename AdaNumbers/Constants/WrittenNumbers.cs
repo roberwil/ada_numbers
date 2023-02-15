@@ -1,64 +1,64 @@
 namespace Ada.Numbers.Constants;
 
-public static class WrittenNumbers
+internal static class WrittenNumbers
 {
-	public const string Zero = "Zero";
-	public const string One = "Um";
-	public const string Two = "Dois";
-	public const string Three = "Três";
-	public const string Four = "Quatro";
-	public const string Five = "Cinco";
-	public const string Six = "Seis";
-	public const string Seven = "Sete";
-	public const string Eight = "Oito";
-	public const string Nine = "Nove";
+	internal const string Zero = "Zero";
+	internal const string One = "Um";
+	private const string Two = "Dois";
+	private const string Three = "Três";
+	private const string Four = "Quatro";
+	private const string Five = "Cinco";
+	private const string Six = "Seis";
+	private const string Seven = "Sete";
+	private const string Eight = "Oito";
+	private const string Nine = "Nove";
 
-	public const string Ten = "Dez";
-	public const string Eleven = "Onze";
-	public const string Twelve = "Doze";
-	public const string Thirteen = "Treze";
-	public const string Fourteen = "Catorze";
-	public const string Fifteen = "Quinze";
-	public const string Sixteen = "Dezasseis";
-	public const string Seventeen = "Dezassete";
-	public const string Eighteen = "Dezoito";
-	public const string Nineteen = "Dezanove";
+	private const string Ten = "Dez";
+	private const string Eleven = "Onze";
+	private const string Twelve = "Doze";
+	private const string Thirteen = "Treze";
+	private const string Fourteen = "Catorze";
+	private const string Fifteen = "Quinze";
+	private const string Sixteen = "Dezasseis";
+	private const string Seventeen = "Dezassete";
+	private const string Eighteen = "Dezoito";
+	private const string Nineteen = "Dezanove";
 
-	public const string Twenty = "Vinte";
-	public const string Thirty = "Trinta";
-	public const string Forty = "Quarenta";
-	public const string Fifty = "Cinquenta";
-	public const string Sixty = "Sessenta";
-	public const string Seventy = "Setenta";
-	public const string Eighty = "Oitenta";
-	public const string Ninety = "Noventa";
+	private const string Twenty = "Vinte";
+	private const string Thirty = "Trinta";
+	private const string Forty = "Quarenta";
+	private const string Fifty = "Cinquenta";
+	private const string Sixty = "Sessenta";
+	private const string Seventy = "Setenta";
+	private const string Eighty = "Oitenta";
+	private const string Ninety = "Noventa";
 
-	public const string OneHundredSingle = "Cem";
-	public const string OneHundred = "Cento";
+	internal const string OneHundredSingle = "Cem";
+	internal const string OneHundred = "Cento";
 
-	public const string TwoHundred = "Duzentos";
-	public const string ThreeHundred = "Trezentos";
-	public const string FourHundred = "Quatrocentos";
-	public const string FiveHundred = "Quinhentos";
-	public const string SixHundred = "Seiscentos";
-	public const string SevenHundred = "Setecentos";
-	public const string EightHundred = "Oitocentos";
-	public const string NineHundred = "Novecentos";
+	internal const string TwoHundred = "Duzentos";
+	internal const string ThreeHundred = "Trezentos";
+	internal const string FourHundred = "Quatrocentos";
+	internal const string FiveHundred = "Quinhentos";
+	internal const string SixHundred = "Seiscentos";
+	internal const string SevenHundred = "Setecentos";
+	internal const string EightHundred = "Oitocentos";
+	internal const string NineHundred = "Novecentos";
 
-	public const string Thousand = "Mil";
+	internal const string Thousand = "Mil";
 
-	public const string MillionSingular = "Um Milhão";
-	public const string MillionPlural = "Milhões";
+	internal const string MillionSingular = "Um Milhão";
+	internal const string MillionPlural = "Milhões";
 
-	public const string ThousandMillion = "Mil Milhões";
+	internal const string ThousandMillion = "Mil Milhões";
 
-	public const string BillionSingular = "Um Bilião";
-	public const string BillionPlural = "Biliões";
+	internal const string BillionSingular = "Um Bilião";
+	internal const string BillionPlural = "Biliões";
 
-	public const string TrillionSingular = "Um Trilião";
-	public const string TrillionPlural = "Triliões";
+	internal const string TrillionSingular = "Um Trilião";
+	internal const string TrillionPlural = "Triliões";
 
-	public static readonly List<string> NumbersThatIgnoreSeparator = new()
+	internal static readonly List<string> NumbersThatIgnoreSeparator = new()
 	{
 		OneHundred,
 		TwoHundred,
@@ -79,7 +79,7 @@ public static class WrittenNumbers
 		TrillionPlural
 	};
 
-	public static readonly Dictionary<string, long> WordsToNumberMap = new()
+	internal static readonly Dictionary<string, long> WordsToNumberMap = new()
 	{
 		{ Zero, 0 },
 		{ One, 1 },
@@ -124,14 +124,14 @@ public static class WrittenNumbers
 		{ MillionPlural, (long)1e6 }
 	};
 
-	public static readonly Dictionary<string, long> WordsToNumberMapLongScale = new()
+	internal static readonly Dictionary<string, long> WordsToNumberMapLongScale = new()
 	{
 		{ ThousandMillion, (long)1e9 },
 		{ BillionSingular, (long)1e12 },
 		{ BillionPlural, (long)1e12 }
 	};
 
-	public static readonly Dictionary<string, long> WordsToNumberMapShorScale = new()
+	internal static readonly Dictionary<string, long> WordsToNumberMapShorScale = new()
 	{
 		{ BillionSingular, (long)1e9 },
 		{ BillionPlural, (long)1e9 },
@@ -139,14 +139,14 @@ public static class WrittenNumbers
 		{ TrillionPlural, (long)1e12 }
 	};
 
-	public static readonly List<string> NotToCombineWithThousand = new()
+	internal static readonly List<string> NotToCombineWithThousand = new()
 	{
 		MillionSingular,
 		BillionPlural,
 		TrillionPlural
 	};
 
-	public static readonly Dictionary<long, string> NumbersToWordsMapUnities = new()
+	internal static readonly Dictionary<long, string> NumbersToWordsMapUnities = new()
 	{
 		{ 0, Zero },
 		{ 1, One },
@@ -160,7 +160,7 @@ public static class WrittenNumbers
 		{ 9, Nine }
 	};
 
-	public static readonly Dictionary<long, string> NumbersToWordsMapTens = new()
+	internal static readonly Dictionary<long, string> NumbersToWordsMapTens = new()
 	{
 		{ 10, Ten },
 		{ 11, Eleven },

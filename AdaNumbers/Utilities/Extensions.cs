@@ -1,5 +1,16 @@
 namespace Ada.Numbers.Utilities;
 
+/// <summary>
+/// A collection of number categories based on the number of digits a number has: <para/>
+///  <br/> - Unity: 1;
+///  <br/> - Ten: 2;
+///  <br/> - Hundred: 3;
+///  <br/> - Thousand: 4 to 6;
+///  <br/> - Million: 7 to 9;
+///  <br/> - Thousand Millions: 10 to 12;
+///  <br/> - Billion: 13 to 15. <para/>
+///  <br/> The collection takes into account the long scale.
+/// </summary>
 public enum NumberCategory
 {
 	Unity = 0,
@@ -13,7 +24,7 @@ public enum NumberCategory
 
 public static class Extensions
 {
-	public static string Resolve(this Dictionary<long, string> pair, long number)
+	internal static string Resolve(this Dictionary<long, string> pair, long number)
 	{
 		try
 		{
@@ -25,7 +36,7 @@ public static class Extensions
 		}
 	}
 
-	public static long? Resolve(this Dictionary<string, long> pair, string words)
+	internal static long? Resolve(this Dictionary<string, long> pair, string words)
 	{
 		try
 		{
@@ -37,11 +48,19 @@ public static class Extensions
 		}
 	}
 
-	public static byte NumberOfDigits(this long number)
-	{
-		return (byte)number.ToString().Length;
-	}
+	/// <summary>
+	/// Computes the how many digits a number has
+	/// </summary>
+	/// <param name="number">The number whose number of digits we want to know</param>
+	/// <returns> The number of digits of "number"</returns>
+	public static byte NumberOfDigits(this long number) =>
+		(byte)number.ToString().Length;
 
+	/// <summary>
+	/// Evaluates the category a number belongs to.
+	/// </summary>
+	/// <param name="number">The number whose category we want to know</param>
+	/// <returns>The category of the number in "NumberFormat" enum</returns>
 	public static NumberCategory Category(this long number)
 	{
 		var result = NumberCategory.Unity;
@@ -79,7 +98,7 @@ public static class Extensions
 		return result;
 	}
 
-	public static byte Bridge(this long number)
+	internal static byte Bridge(this long number)
 	{
 		var numberOfDigits = number.NumberOfDigits();
 
@@ -93,33 +112,42 @@ public static class Extensions
 		return bridge;
 	}
 
-	public static byte NumberOfDigits(this int number)
-	{
-		return NumberOfDigits(number);
-	}
+	/// <summary>
+	/// Computes the how many digits a number has
+	/// </summary>
+	/// <param name="number">The number whose number of digits we want to know</param>
+	/// <returns> The number of digits of "number"</returns>
+	public static byte NumberOfDigits(this int number) =>
+		NumberOfDigits((long)number);
 
-	public static NumberCategory Category(this int number)
-	{
-		return Category(number);
-	}
 
-	public static byte Bridge(this int number)
-	{
-		return Bridge(number);
-	}
+	/// <summary>
+	/// Evaluates the category a number belongs to.
+	/// </summary>
+	/// <param name="number">The number whose category we want to know</param>
+	/// <returns>The category of the number in "NumberFormat" enum</returns>
+	public static NumberCategory Category(this int number) =>
+		Category((long)number);
 
-	public static byte NumberOfDigits(this byte number)
-	{
-		return NumberOfDigits(number);
-	}
+	internal static byte Bridge(this int number) =>
+		Bridge((long)number);
 
-	public static NumberCategory Category(this byte number)
-	{
-		return Category(number);
-	}
+	/// <summary>
+	/// Computes the how many digits a number has
+	/// </summary>
+	/// <param name="number">The number whose number of digits we want to know</param>
+	/// <returns> The number of digits of "number"</returns>
+	public static byte NumberOfDigits(this byte number)=>
+		NumberOfDigits((long)number);
 
-	public static byte Bridge(this byte number)
-	{
-		return Bridge(number);
-	}
+	/// <summary>
+	/// Evaluates the category a number belongs to.
+	/// </summary>
+	/// <param name="number">The number whose category we want to know</param>
+	/// <returns>The category of the number in "NumberFormat" enum</returns>
+	public static NumberCategory Category(this byte number) =>
+		Category((long)number);
+
+	internal static byte Bridge(this byte number) =>
+		Bridge((long)number);
 }
