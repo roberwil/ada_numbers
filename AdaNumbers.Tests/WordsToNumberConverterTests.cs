@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Data;
 using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,9 +13,11 @@ public class WordsToNumberConverterTest
 		Assert.AreEqual(expected.ToString(), useShortScale ? actual.ToNumber(true) : actual.ToNumber());
 	}
 
-	private void SimpleAssert(decimal expected, string actual, bool useShortScale = false)
+	private static void SimpleAssert(decimal expected, string actual, bool useShortScale = false)
 	{
-		Assert.AreEqual(expected.ToString(CultureInfo.InvariantCulture), useShortScale ? actual.ToNumber(true) : actual.ToNumber());
+		Assert.AreEqual(expected.ToString(CultureInfo.InvariantCulture), useShortScale ?
+			actual.ToNumber(true) :
+			actual.ToNumber());
 	}
 
 	[DataTestMethod]

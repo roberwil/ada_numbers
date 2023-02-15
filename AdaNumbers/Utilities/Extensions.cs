@@ -7,7 +7,7 @@ public enum NumberCategory
 	Hundred = 2,
 	Thousand = 3,
 	Million = 6,
-	ThousandMiliions = 9,
+	ThousandMillions = 9,
 	Billion = 12
 }
 
@@ -67,7 +67,7 @@ public static class Extensions
 			case 10:
 			case 11:
 			case 12:
-				result = NumberCategory.ThousandMiliions;
+				result = NumberCategory.ThousandMillions;
 				break;
 			case 13:
 			case 14:

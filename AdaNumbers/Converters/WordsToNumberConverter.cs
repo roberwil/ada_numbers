@@ -19,6 +19,7 @@ public static class WordsToNumberConverter
 		word = Regex.Replace(word, "\\s+", " ").Trim();
 		word = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.Trim());
 
+		// Check whether the number has a decimal part (length of 2)
 		var wordsToConvert = word.Split($" {Separators.DecimalSeparator} ");
 
 		if (wordsToConvert.Length == 1)

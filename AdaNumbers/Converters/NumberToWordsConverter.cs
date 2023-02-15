@@ -33,7 +33,9 @@ public static class NumberToWordsConverter
 
 	public static string Convert(decimal number, bool useShortScale = false)
 	{
-		var strNumber = number.ToString(CultureInfo.InvariantCulture).Split(".");
+		var strNumber = number.
+			ToString(CultureInfo.InvariantCulture).
+			Split(".");
 		var strIntegerPart = strNumber.First();
 		var strDecimalPart = strNumber.Last();
 
@@ -52,7 +54,9 @@ public static class NumberToWordsConverter
 			return result;
 
 		result += $" {Separators.DecimalSeparator} ";
-		result = strDecimalPart.TakeWhile(dp => dp == '0').Aggregate(result, (current, dp) => current + $"{WrittenNumbers.Zero} ");
+		result = strDecimalPart.
+			TakeWhile(dp => dp == '0').
+			Aggregate(result, (current, _) => current + $"{WrittenNumbers.Zero} ");
 
 		NumberTokens.Clear();
 		result += ResolveNumber(decimalPart);
@@ -82,7 +86,7 @@ public static class NumberToWordsConverter
 			NumberCategory.Hundred => Hundreds(number, flag),
 			NumberCategory.Thousand => Thousands(number),
 			NumberCategory.Million => Millions(number),
-			NumberCategory.ThousandMiliions => ThousandMillions(number),
+			NumberCategory.ThousandMillions => ThousandMillions(number),
 			NumberCategory.Billion => Billions(number),
 			_ => result
 		};
@@ -90,7 +94,6 @@ public static class NumberToWordsConverter
 		if (result == string.Empty)
 		{
 			var strNumber = number.ToString();
-			long firstDigits = 0, otherDigits = 0;
 
 			var bridge = number.Bridge();
 
@@ -99,8 +102,8 @@ public static class NumberToWordsConverter
 			if (numberCategory == NumberCategory.Hundred)
 				flagFirstDigits = number != 100;
 
-			firstDigits = long.Parse(strNumber[..bridge] + (new string('0', (byte)numberCategory)));
-			otherDigits = long.Parse(strNumber[bridge..]);
+			var firstDigits = long.Parse(strNumber[..bridge] + new string('0', (byte)numberCategory));
+			var otherDigits = long.Parse(strNumber[bridge..]);
 
 			var flagOtherDigits = otherDigits != 100;
 
@@ -115,7 +118,7 @@ public static class NumberToWordsConverter
 		return NumberTokens.AddSeparatorsToNumber();
 	}
 
-	private static string AddSeparatorsToNumber(this List<string> numberTokens)
+	private static string AddSeparatorsToNumber(this IReadOnlyList<string> numberTokens)
 	{
 		var result = numberTokens.First();
 

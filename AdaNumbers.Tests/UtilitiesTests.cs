@@ -1,5 +1,3 @@
-
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Ada.Numbers.Utilities;
@@ -19,9 +17,9 @@ public class UtilitiesTests
 	[DataRow(1111111, NumberCategory.Million)]
 	[DataRow(11111111, NumberCategory.Million)]
 	[DataRow(111111111, NumberCategory.Million)]
-	[DataRow(1111111111, NumberCategory.ThousandMiliions)]
-	[DataRow(11111111111, NumberCategory.ThousandMiliions)]
-	[DataRow(111111111111, NumberCategory.ThousandMiliions)]
+	[DataRow(1111111111, NumberCategory.ThousandMillions)]
+	[DataRow(11111111111, NumberCategory.ThousandMillions)]
+	[DataRow(111111111111, NumberCategory.ThousandMillions)]
 	[DataRow(1111111111111, NumberCategory.Billion)]
 	[DataRow(11111111111111, NumberCategory.Billion)]
 	[DataRow(111111111111111, NumberCategory.Billion)]
