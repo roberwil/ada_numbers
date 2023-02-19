@@ -10,39 +10,33 @@ internal static class NumberToWordsConverter
 	private static bool _useShortScale;
 	private static readonly List<string> NumberTokens = new();
 
-	internal static string Convert(long number, bool useShortScale = false)
+	private static void SelectScale() =>
+		_useShortScale = Settings.Scale == Settings.Parameters.Scales.Short;
+
+	internal static string Convert(long number)
 	{
 		if (number.NumberOfDigits() > Limit)
 			return Messages.Unsupported;
 
-		_useShortScale = useShortScale;
+		SelectScale();
 
 		NumberTokens.Clear();
 		return ResolveNumber(number);
 	}
 
-	internal static string Convert(int number, bool useShortScale = false)
+	internal static string Convert(decimal number)
 	{
-		return Convert((long)number, useShortScale);
-	}
+		SelectScale();
 
-	internal static string Convert(byte number, bool useShortScale = false)
-	{
-		return Convert((long)number, useShortScale);
-  }
-
-	internal static string Convert(decimal number, bool useShortScale = false)
-	{
 		var strNumber = number.
 			ToString(CultureInfo.InvariantCulture).
 			Split(".");
+
 		var strIntegerPart = strNumber.First();
-		var strDecimalPart = strNumber.Last();
+		var strDecimalPart = strNumber.Length == 1 ? "0" : strNumber.Last();
 
 		if (strIntegerPart.Length > Limit || strDecimalPart.Length > Limit)
 			return Messages.Unsupported;
-
-		_useShortScale = useShortScale;
 
 		var wholePart = long.Parse(strIntegerPart);
 		var decimalPart = long.Parse(strDecimalPart);
@@ -64,17 +58,7 @@ internal static class NumberToWordsConverter
 		return result;
 	}
 
-	internal static string Convert(double number, bool useShortScale = false)
-	{
-		return Convert((decimal)number, useShortScale);
-	}
-
-	internal static string Convert(float number, bool useShortScale = false)
-	{
-		return Convert((decimal)number, useShortScale);
-	}
-
-	internal static string ResolveNumber(long number, bool flag = false)
+	private static string ResolveNumber(long number, bool flag = false)
 	{
 		var result = string.Empty;
 		var numberCategory = number.Category();
