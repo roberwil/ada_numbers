@@ -1,20 +1,23 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Ada.Numbers.Converters;
+using Ada.Numbers.Utilities;
 
 namespace Ada.Numbers.Tests;
 
 [TestClass]
 public class ConvertToWordsTest
 {
-	private void SimpleAssert(string expected, long actual, bool useShortScale = false)
+	private static void SimpleAssert(string expected, long actual, bool useShortScale = false)
 	{
-		Assert.AreEqual(expected, useShortScale ? actual.ToWords(true) : actual.ToWords());
+		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
+		Assert.AreEqual(expected, actual.ToWords());
 	}
 
-	private void SimpleAssert(string expected, decimal actual, bool useShortScale = false)
+	private static void SimpleAssert(string expected, double actual, bool useShortScale = false)
 	{
-		Assert.AreEqual(expected, useShortScale ? actual.ToWords(true) : actual.ToWords());
+		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
+		Assert.AreEqual(expected, actual.ToWords());
 	}
 
 	[DataTestMethod]
@@ -217,7 +220,6 @@ public class ConvertToWordsTest
 		SimpleAssert(expected, actual);
 	}
 
-	[Ignore]
 	[DataTestMethod]
 	[DataRow(42.2, "Quarenta e Dois Vírgula Dois" )]
 	[DataRow(102.0, "Cento e Dois" )]
@@ -227,7 +229,7 @@ public class ConvertToWordsTest
 	[DataRow(902.982, "Novecentos e Dois Vírgula Novecentos e Oitenta e Dois" )]
 	[DataRow(100000.001, "Cem Mil Vírgula Zero Zero Um" )]
 	[DataRow(100123.100123, "Cem Mil Cento e Vinte e Três Vírgula Cem Mil Cento e Vinte e Três" )]
-	public void RandomNumbersDecimals(decimal actual, string expected)
+	public void RandomNumbersDecimals(double actual, string expected)
 	{
 		SimpleAssert(expected, actual);
 	}
