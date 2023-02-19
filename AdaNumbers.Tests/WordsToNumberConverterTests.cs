@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Ada.Numbers.Converters;
+using Ada.Numbers.Utilities;
 
 namespace Ada.Numbers.Tests;
 
@@ -10,14 +11,14 @@ public class WordsToNumberConverterTest
 {
 	private void SimpleAssert(long expected, string actual, bool useShortScale = false)
 	{
-		Assert.AreEqual(expected.ToString(), useShortScale ? actual.ToNumber(true) : actual.ToNumber());
+		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
+		Assert.AreEqual(expected.ToString(), actual.ToNumber());
 	}
 
 	private static void SimpleAssert(decimal expected, string actual, bool useShortScale = false)
 	{
-		Assert.AreEqual(expected.ToString(CultureInfo.InvariantCulture), useShortScale ?
-			actual.ToNumber(true) :
-			actual.ToNumber());
+		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
+		Assert.AreEqual(expected.ToString(CultureInfo.InvariantCulture), actual.ToNumber());
 	}
 
 	[DataTestMethod]

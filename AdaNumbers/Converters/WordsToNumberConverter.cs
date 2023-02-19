@@ -7,8 +7,15 @@ namespace Ada.Numbers.Converters;
 
 internal static class WordsToNumberConverter
 {
-	internal static string? Convert(string word, bool useShortScale = false)
+	private static bool _useShortScale;
+
+	private static void SelectScale() =>
+		_useShortScale = Settings.Scale == Settings.Parameters.Scales.Short;
+
+	internal static string? Convert(string word)
 	{
+		SelectScale();
+
 		// Let the word be ins cute format: no extra spaces, first letter in capital
 		word = Regex.Replace(word, "\\s+", " ").Trim();
 		word = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.Trim());
@@ -22,14 +29,14 @@ internal static class WordsToNumberConverter
 		switch (wordsToConvert.Length)
 		{
 			case 1:
-				return ResolveWord(word, useShortScale);
+				return ResolveWord(word, _useShortScale);
 			case 2:
 			{
 				var countZeros = wordsToConvert.Last().Split().Select(w => w)
 					.Count(w => w == WrittenNumbers.Zero);
 
-				var wholePart = ResolveWord(wordsToConvert.First(), useShortScale);
-				var decimalPart = ResolveWord(wordsToConvert.Last().Replace(WrittenNumbers.Zero, ""), useShortScale);
+				var wholePart = ResolveWord(wordsToConvert.First(), _useShortScale);
+				var decimalPart = ResolveWord(wordsToConvert.Last().Replace(WrittenNumbers.Zero, ""), _useShortScale);
 
 				if (wholePart == Messages.InvalidNumber || decimalPart == Messages.InvalidNumber)
 					return Messages.InvalidNumber;
