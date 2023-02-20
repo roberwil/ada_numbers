@@ -1,8 +1,8 @@
 namespace Ada.Numbers.Utilities;
 
-public static class Settings
+public abstract class Settings
 {
-	public static class Parameters
+	public abstract class Parameters
 	{
 		public enum Languages
 		{

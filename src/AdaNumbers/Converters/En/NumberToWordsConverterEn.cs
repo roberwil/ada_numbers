@@ -47,7 +47,7 @@ internal static class NumberToWordsConverterEn
 		if (decimalPart == 0)
 			return result;
 
-		result += $" {Separators.DecimalSeparatorEn.ToLower()} ";
+		result += $" {SeparatorsEn.DecimalSeparator.ToLower()} ";
 		result = strDecimalPart.
 			TakeWhile(dp => dp == '0').
 			Aggregate(result, (current, _) => current + $"{WrittenNumbersEn.Zero} ");
@@ -121,7 +121,7 @@ internal static class NumberToWordsConverterEn
 			else if (noSeparator)
 				result += $" {currentToken}";
 			else
-				result += $" {Separators.NumbersSeparatorEn.ToLower()} {currentToken}";
+				result += $" {SeparatorsEn.NumbersSeparator.ToLower()} {currentToken}";
 		}
 
 		return result;
@@ -148,7 +148,7 @@ internal static class NumberToWordsConverterEn
 		return result;
 	}
 
-	private static string Hundreds(long number, bool isCent = false)
+	private static string Hundreds(long number)
 	{
 		return EvaluateHundredsAndOver(number, (long)1e2, WrittenNumbersEn.Hundred);
 	}

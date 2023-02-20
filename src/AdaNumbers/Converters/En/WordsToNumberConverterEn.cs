@@ -18,15 +18,15 @@ internal static class WordsToNumberConverterEn
 
 		// Let the word be ins cute format: no extra spaces, first letter in capital
 		word = Regex.Replace(word, "\\s+", " ").Trim();
-		word = word.Replace("-", $" {Separators.NumbersSeparatorEn} ");
+		word = word.Replace("-", $" {SeparatorsEn.NumbersSeparator} ");
 		word = word.Replace(",", "");
 		word = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.Trim());
 
 		// Check whether the number has a decimal part (length of 2)
-		var wordsToConvert = word.Split($" {Separators.DecimalSeparatorEn} ");
+		var wordsToConvert = word.Split($" {SeparatorsEn.DecimalSeparator} ");
 
 		if (wordsToConvert.Length == 1)
-			wordsToConvert = word.Split($" {Separators.DecimalSeparatorAlternativeEn} ");
+			wordsToConvert = word.Split($" {SeparatorsEn.DecimalSeparatorAlternative} ");
 
 		switch (wordsToConvert.Length)
 		{
@@ -82,22 +82,19 @@ internal static class WordsToNumberConverterEn
 			// Check if separator is used correctly or is repeated
 			switch (token)
 			{
-				case Separators.NumbersSeparatorEn when cursor == 0 || cursor == stringTokens.Length - 1:
-				case Separators.NumbersSeparatorEn when WrittenNumbersEn.NumbersThatIgnoreSeparator.Contains(stringTokens[cursor + 1]):
-				case Separators.NumbersSeparatorEn when cursor > 0 && stringTokens[cursor - 1] == Separators.NumbersSeparatorEn:
+				case SeparatorsEn.NumbersSeparator when cursor == 0 || cursor == stringTokens.Length - 1:
+				case SeparatorsEn.NumbersSeparator when WrittenNumbersEn.NumbersThatIgnoreSeparator.Contains(stringTokens[cursor + 1]):
+				case SeparatorsEn.NumbersSeparator when cursor > 0 && stringTokens[cursor - 1] == SeparatorsEn.NumbersSeparator:
 					return Messages.InvalidNumber;
-				case Separators.NumbersSeparatorEn:
+				case SeparatorsEn.NumbersSeparator:
 					continue;
 			}
-
-			// Since there's no match for "milhão", "bilião", "trilião", etc., we add "Um" which is mapped
-			//token = IsToJoinOne(token) ? $"{WrittenNumbersEn.One} {token}" : token;
 
 			var numberHasIncorrectOrNoSeparator =
 				cursor > 0 && (cursor + 1 < stringTokens.Length - 1) &&
 				!WrittenNumbersEn.NumbersThatIgnoreSeparator.Contains(token) &&
 				!WrittenNumbersEn.NumbersThatIgnoreSeparator.Contains(stringTokens[cursor+1]) &&
-				stringTokens[cursor - 1] != Separators.NumbersSeparatorEn;
+				stringTokens[cursor - 1] != SeparatorsEn.NumbersSeparator;
 
 			var numberIsInIncorrectShortScaleFormat =
 				useShortScale && cursor > 0 && cursor < stringTokens.Length - 1 &&
@@ -125,15 +122,6 @@ internal static class WordsToNumberConverterEn
 		}
 
 		return numericTokens.Sum().ToString();
-	}
-
-	private static bool IsToJoinOne(string token)
-	{
-		return token is not (WrittenNumbersEn.One or WrittenNumbersEn.Thousand) &&
-		       (WrittenNumbersEn.Hundred.Contains(token) ||
-		        WrittenNumbersEn.Billion.Contains(token) ||
-		        WrittenNumbersEn.Billion.Contains(token) ||
-		        WrittenNumbersEn.Trillion.Contains(token));
 	}
 
 	private static bool IsToComputeMultiplier(string token, int numberOfNumericTokens)
