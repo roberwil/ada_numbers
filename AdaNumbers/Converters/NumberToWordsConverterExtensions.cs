@@ -1,3 +1,5 @@
+using Ada.Numbers.Utilities;
+
 namespace Ada.Numbers.Converters;
 
 public static class NumberToWordsConverterExtensions
@@ -9,7 +11,12 @@ public static class NumberToWordsConverterExtensions
 	/// <returns>The equivalent in words of "number" or a message of type "Messages" as in Ada.Numbers.Constants namespace</returns>
 	public static string ToWords(this long number)
 	{
-		return NumberToWordsConverter.Convert(number);
+		return Settings.Language switch
+		{
+			Settings.Parameters.Languages.Pt => NumberToWordsConverter.Convert(number),
+			Settings.Parameters.Languages.En => NumberToWordsConverterEn.Convert(number),
+			_ => NumberToWordsConverter.Convert(number)
+		};
 	}
 
 	/// <summary>
@@ -19,7 +26,8 @@ public static class NumberToWordsConverterExtensions
 	/// <returns>The equivalent in words of "number" or a message of type "Messages" as in Ada.Numbers.Constants namespace</returns>
 	public static string ToWords(this int number)
 	{
-		return NumberToWordsConverter.Convert(number);
+		long l = number;
+		return l.ToWords();
 	}
 
 	/// <summary>
@@ -29,7 +37,8 @@ public static class NumberToWordsConverterExtensions
 	/// <returns>The equivalent in words of "number" or a message of type "Messages" as in Ada.Numbers.Constants namespace</returns>
 	public static string ToWords(this byte number)
 	{
-		return NumberToWordsConverter.Convert(number);
+		long l = number;
+		return l.ToWords();
 	}
 
 	/// <summary>
@@ -39,7 +48,12 @@ public static class NumberToWordsConverterExtensions
 	/// <returns>The equivalent in words of "number" or a message of type "Messages" as in Ada.Numbers.Constants namespace</returns>
 	public static string ToWords(this decimal number)
 	{
-		return NumberToWordsConverter.Convert(number);
+		return Settings.Language switch
+		{
+			Settings.Parameters.Languages.Pt => NumberToWordsConverter.Convert(number),
+			Settings.Parameters.Languages.En => NumberToWordsConverterEn.Convert(number),
+			_ => NumberToWordsConverter.Convert(number)
+		};
 	}
 
 	/// <summary>
@@ -49,7 +63,8 @@ public static class NumberToWordsConverterExtensions
 	/// <returns>The equivalent in words of "number" or a message of type "Messages" as in Ada.Numbers.Constants namespace</returns>
 	public static string ToWords(this double number)
 	{
-		return NumberToWordsConverter.Convert((decimal)number);
+		var d = (decimal)number;
+		return d.ToWords();
 	}
 
 	/// <summary>
@@ -59,6 +74,7 @@ public static class NumberToWordsConverterExtensions
 	/// <returns>The equivalent in words of "number" or a message of type "Messages" as in Ada.Numbers.Constants namespace</returns>
 	public static string ToWords(this float number)
 	{
-		return NumberToWordsConverter.Convert((decimal)number);
+		var d = (decimal)number;
+		return d.ToWords();
 	}
 }

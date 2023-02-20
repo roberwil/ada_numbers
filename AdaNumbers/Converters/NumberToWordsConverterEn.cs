@@ -4,7 +4,7 @@ using Ada.Numbers.Constants;
 
 namespace Ada.Numbers.Converters;
 
-internal static class NumberToWordsConverter
+internal static class NumberToWordsConverterEn
 {
 	private const byte Limit = 15;
 	private static bool _useShortScale;
@@ -47,10 +47,10 @@ internal static class NumberToWordsConverter
 		if (decimalPart == 0)
 			return result;
 
-		result += $" {Separators.DecimalSeparator.ToLower()} ";
+		result += $" {Separators.DecimalSeparatorEn.ToLower()} ";
 		result = strDecimalPart.
 			TakeWhile(dp => dp == '0').
-			Aggregate(result, (current, _) => current + $"{WrittenNumbers.Zero} ");
+			Aggregate(result, (current, _) => current + $"{WrittenNumbersEn.Zero} ");
 
 		NumberTokens.Clear();
 		result += ResolveNumber(decimalPart);
@@ -58,7 +58,7 @@ internal static class NumberToWordsConverter
 		return result;
 	}
 
-	private static string ResolveNumber(long number, bool flag = false)
+	private static string ResolveNumber(long number)
 	{
 		var result = string.Empty;
 		var numberCategory = number.Category();
@@ -67,7 +67,7 @@ internal static class NumberToWordsConverter
 		{
 			NumberCategory.Unity => Unities(number),
 			NumberCategory.Ten => Tens(number),
-			NumberCategory.Hundred => Hundreds(number, flag),
+			NumberCategory.Hundred => Hundreds(number),
 			NumberCategory.Thousand => Thousands(number),
 			NumberCategory.Million => Millions(number),
 			NumberCategory.ThousandMillions => ThousandMillions(number),
@@ -81,18 +81,11 @@ internal static class NumberToWordsConverter
 
 			var bridge = number.Bridge();
 
-			var flagFirstDigits = false;
-
-			if (numberCategory == NumberCategory.Hundred)
-				flagFirstDigits = number != 100;
-
 			var firstDigits = long.Parse(strNumber[..bridge] + new string('0', (byte)numberCategory));
 			var otherDigits = long.Parse(strNumber[bridge..]);
 
-			var flagOtherDigits = otherDigits != 100;
-
-			ResolveNumber(firstDigits, flagFirstDigits);
-			ResolveNumber(otherDigits, flagOtherDigits);
+			ResolveNumber(firstDigits);
+			ResolveNumber(otherDigits);
 		}
 		else
 		{
@@ -102,6 +95,9 @@ internal static class NumberToWordsConverter
 		return NumberTokens.AddSeparatorsToNumber();
 	}
 
+	private static bool IsUnity(string number) =>
+		WrittenNumbersEn.WordsToNumberUnitiesMap.Resolve(number) is not null;
+
 	private static string AddSeparatorsToNumber(this IReadOnlyList<string> numberTokens)
 	{
 		var result = numberTokens.First();
@@ -110,10 +106,22 @@ internal static class NumberToWordsConverter
 		{
 			var currentToken = numberTokens[cursor];
 
-			if (WrittenNumbers.NumbersThatIgnoreSeparator.Contains(currentToken))
+			var isHundred = cursor + 1 < numberTokens.Count &&
+			                IsUnity(currentToken) &&
+			                numberTokens[cursor + 1] == WrittenNumbersEn.Hundred;
+
+			var addComma = cursor > 1 &&
+			               isHundred;
+
+			var noSeparator = WrittenNumbersEn.NumbersThatIgnoreSeparator.Contains(currentToken) ||
+			                   isHundred;
+
+			if (addComma)
+				result += $", {currentToken}";
+			else if (noSeparator)
 				result += $" {currentToken}";
 			else
-				result += $" {Separators.NumbersSeparator.ToLower()} {currentToken}";
+				result += $" {Separators.NumbersSeparatorEn.ToLower()} {currentToken}";
 		}
 
 		return result;
@@ -121,70 +129,62 @@ internal static class NumberToWordsConverter
 
 	private static string Unities(long number)
 	{
-		return WrittenNumbers.NumbersToWordsMapUnities.Resolve(number);
+		return WrittenNumbersEn.NumbersToWordsMapUnities.Resolve(number);
 	}
 
 	private static string Tens(long number)
 	{
-		return WrittenNumbers.NumbersToWordsMapTens.Resolve(number);
+		var result = WrittenNumbersEn.NumbersToWordsMapTens.Resolve(number);
+
+		if (result != string.Empty)
+			return result;
+
+		var bridge = number.Bridge();
+
+		var ten = long.Parse(number.ToString()[..bridge]!)*10;
+		var unity = long.Parse(number.ToString()[bridge..]!);
+
+		result = $"{Tens(ten)}-{Unities(unity).ToLower()}";
+		return result;
 	}
 
 	private static string Hundreds(long number, bool isCent = false)
 	{
-		var results = new Dictionary<long, string>
-		{
-			{ 200, WrittenNumbers.TwoHundred },
-			{ 300, WrittenNumbers.ThreeHundred },
-			{ 400, WrittenNumbers.FourHundred },
-			{ 500, WrittenNumbers.FiveHundred },
-			{ 600, WrittenNumbers.SixHundred },
-			{ 700, WrittenNumbers.SevenHundred },
-			{ 800, WrittenNumbers.EightHundred },
-			{ 900, WrittenNumbers.NineHundred },
-			{ 100, isCent ? WrittenNumbers.OneHundred : WrittenNumbers.OneHundredSingle }
-		};
-
-		return results.Resolve(number);
+		return EvaluateHundredsAndOver(number, (long)1e2, WrittenNumbersEn.Hundred);
 	}
 
 	private static string Thousands(long number)
 	{
-		return EvaluateThousandsAndOver(number, (long)1e3, WrittenNumbers.Thousand, WrittenNumbers.Thousand);
+		return EvaluateHundredsAndOver(number, (long)1e3, WrittenNumbersEn.Thousand);
 	}
 
 	private static string Millions(long number)
 	{
-		return EvaluateThousandsAndOver(number, (long)1e6, WrittenNumbers.MillionSingular, WrittenNumbers.MillionPlural);
+		return EvaluateHundredsAndOver(number, (long)1e6, WrittenNumbersEn.Million);
 	}
 
 	private static string ThousandMillions(long number)
 	{
-		var singular = _useShortScale ? WrittenNumbers.BillionSingular : WrittenNumbers.ThousandMillion;
-		var plural = _useShortScale ? WrittenNumbers.BillionPlural : WrittenNumbers.ThousandMillion;
-
-		return EvaluateThousandsAndOver(number, (long)1e9, singular, plural);
+		var qualifier = _useShortScale ? WrittenNumbersEn.Billion : WrittenNumbersEn.ThousandMillion;
+		return EvaluateHundredsAndOver(number, (long)1e9, qualifier);
 	}
 
 	private static string Billions(long number)
 	{
-		var singular = _useShortScale ? WrittenNumbers.TrillionSingular : WrittenNumbers.BillionSingular;
-		var plural = _useShortScale ? WrittenNumbers.TrillionPlural : WrittenNumbers.BillionPlural;
-
-		return EvaluateThousandsAndOver(number, (long)1e12, singular, plural);
+		var qualifier = _useShortScale ? WrittenNumbersEn.Trillion : WrittenNumbersEn.Billion;
+		return EvaluateHundredsAndOver(number, (long)1e12, qualifier);
 	}
 
-	private static string EvaluateThousandsAndOver(long number, long categoryIdentifier, string singular, string plural)
+	private static string EvaluateHundredsAndOver(long number, long categoryIdentifier, string qualifier)
 	{
-		if (number == categoryIdentifier)
-			return singular;
-
 		if (number%categoryIdentifier != 0)
 			return string.Empty;
 
 		var partialNumber = long.Parse(number.ToString()[..number.Bridge()]);
 
 		ResolveNumber(partialNumber);
-		return plural;
+		return qualifier;
 	}
 
 }
+

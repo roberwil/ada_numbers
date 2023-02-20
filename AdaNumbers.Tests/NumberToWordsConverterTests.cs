@@ -221,14 +221,14 @@ public class ConvertToWordsTest
 	}
 
 	[DataTestMethod]
-	[DataRow(42.2, "Quarenta e Dois Vírgula Dois" )]
+	[DataRow(42.2, "Quarenta e Dois vírgula Dois" )]
 	[DataRow(102.0, "Cento e Dois" )]
 	[DataRow(103.000, "Cento e Três" )]
-	[DataRow(113.02, "Cento e Treze Vírgula Zero Dois" )]
-	[DataRow(123.0045, "Cento e Vinte e Três Vírgula Zero Zero Quarenta e Cinco" )]
-	[DataRow(902.982, "Novecentos e Dois Vírgula Novecentos e Oitenta e Dois" )]
-	[DataRow(100000.001, "Cem Mil Vírgula Zero Zero Um" )]
-	[DataRow(100123.100123, "Cem Mil Cento e Vinte e Três Vírgula Cem Mil Cento e Vinte e Três" )]
+	[DataRow(113.02, "Cento e Treze vírgula Zero Dois" )]
+	[DataRow(123.0045, "Cento e Vinte e Três vírgula Zero Zero Quarenta e Cinco" )]
+	[DataRow(902.982, "Novecentos e Dois vírgula Novecentos e Oitenta e Dois" )]
+	[DataRow(100000.001, "Cem Mil vírgula Zero Zero Um" )]
+	[DataRow(100123.100123, "Cem Mil Cento e Vinte e Três vírgula Cem Mil Cento e Vinte e Três" )]
 	public void RandomNumbersDecimals(double actual, string expected)
 	{
 		SimpleAssert(expected, actual);
