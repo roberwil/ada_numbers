@@ -9,14 +9,16 @@ namespace Ada.Numbers.Tests;
 [TestClass]
 public class WordsToNumberConverterTestEn
 {
-	private void SimpleAssert(long expected, string actual, bool useShortScale = false)
+	private static void SimpleAssert(long expected, string actual, bool useShortScale = false)
 	{
+		Settings.Language = Settings.Parameters.Languages.En;
 		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
 		Assert.AreEqual(expected.ToString(), actual.ToNumber());
 	}
 
 	private static void SimpleAssert(decimal expected, string actual, bool useShortScale = false)
 	{
+		Settings.Language = Settings.Parameters.Languages.En;
 		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
 		Assert.AreEqual(expected.ToString(CultureInfo.InvariantCulture), actual.ToNumber());
 	}
@@ -119,8 +121,8 @@ public class WordsToNumberConverterTestEn
 	[DataRow(10000, "Ten Thousand")]
 	[DataRow(10001, "Ten Thousand and One")]
 	[DataRow(34001, "Thirty-four Thousand and One")]
-	[DataRow(140000, "One Hundred and Forty Thousand")]
-	[DataRow(140001, "One Hundred and Forty Thousand and One")]
+	[DataRow(140000, "One Hundred, Forty Thousand")]
+	[DataRow(140001, "One Hundred, Forty Thousand and One")]
 	public void ThousandsAreValid(int expected, string actual)
 	{
 		SimpleAssert(expected, actual);
@@ -211,8 +213,8 @@ public class WordsToNumberConverterTestEn
 	[DataRow(21123, "Twenty-one Thousand, One Hundred and Twenty-three" )]
 	[DataRow(100000, "One Hundred Thousand" )]
 	[DataRow(100123, "One Hundred Thousand, One Hundred and Twenty-three" )]
-	[DataRow(112123, "One Hundred and Twelve Thousand, One Hundred and Twenty-three" )]
-	[DataRow(134123, "One Hundred and Thirty-four Thousand, One Hundred and Twenty-three" )]
+	[DataRow(112123, "One Hundred, Twelve Thousand, One Hundred and Twenty-three" )]
+	[DataRow(134123, "One Hundred, Thirty-four Thousand, One Hundred and Twenty-three" )]
 	public void RandomNumbersIntegers(int expected, string actual)
 	{
 		SimpleAssert(expected, actual);

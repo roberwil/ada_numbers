@@ -9,14 +9,16 @@ namespace Ada.Numbers.Tests;
 [TestClass]
 public class WordsToNumberConverterTest
 {
-	private void SimpleAssert(long expected, string actual, bool useShortScale = false)
+	private static void SimpleAssert(long expected, string actual, bool useShortScale = false)
 	{
+		Settings.Language = Settings.Parameters.Languages.Pt;
 		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
 		Assert.AreEqual(expected.ToString(), actual.ToNumber());
 	}
 
 	private static void SimpleAssert(decimal expected, string actual, bool useShortScale = false)
 	{
+		Settings.Language = Settings.Parameters.Languages.Pt;
 		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
 		Assert.AreEqual(expected.ToString(CultureInfo.InvariantCulture), actual.ToNumber());
 	}
