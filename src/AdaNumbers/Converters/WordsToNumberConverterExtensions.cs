@@ -1,4 +1,6 @@
 
+using Ada.Numbers.Utilities;
+
 namespace Ada.Numbers.Converters;
 
 public static class WordsToNumberConverterExtensions
@@ -12,6 +14,11 @@ public static class WordsToNumberConverterExtensions
 	/// </returns>
 	public static string? ToNumber(this string word)
 	{
-		return WordsToNumberConverter.Convert(word);
+		return Settings.Language switch
+		{
+			Settings.Parameters.Languages.Pt => WordsToNumberConverter.Convert(word),
+			Settings.Parameters.Languages.En => WordsToNumberConverterEn.Convert(word),
+			_ => WordsToNumberConverter.Convert(word)
+		};
 	}
 }

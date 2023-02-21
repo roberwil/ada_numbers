@@ -8,6 +8,7 @@ namespace Ada.Numbers.Constants;
 /// </summary>
 public static class Separators
 {
+	// Pt
 	public const string NumbersSeparator = "E";
 	public const string DecimalSeparator = "Vírgula";
 	public const string DecimalSeparatorAlternative = "Ponto";

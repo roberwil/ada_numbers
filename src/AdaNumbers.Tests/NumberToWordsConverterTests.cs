@@ -1,4 +1,3 @@
-using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Ada.Numbers.Converters;
@@ -7,18 +6,18 @@ using Ada.Numbers.Utilities;
 namespace Ada.Numbers.Tests;
 
 [TestClass]
-public class WordsToNumberConverterTest
+public class ConvertToWordsTest
 {
-	private void SimpleAssert(long expected, string actual, bool useShortScale = false)
+	private static void SimpleAssert(string expected, long actual, bool useShortScale = false)
 	{
 		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
-		Assert.AreEqual(expected.ToString(), actual.ToNumber());
+		Assert.AreEqual(expected, actual.ToWords());
 	}
 
-	private static void SimpleAssert(decimal expected, string actual, bool useShortScale = false)
+	private static void SimpleAssert(string expected, double actual, bool useShortScale = false)
 	{
 		Settings.Scale = useShortScale ? Settings.Parameters.Scales.Short : Settings.Parameters.Scales.Long;
-		Assert.AreEqual(expected.ToString(CultureInfo.InvariantCulture), actual.ToNumber());
+		Assert.AreEqual(expected, actual.ToWords());
 	}
 
 	[DataTestMethod]
@@ -32,7 +31,7 @@ public class WordsToNumberConverterTest
 	[DataRow(7, "Sete")]
 	[DataRow(8, "Oito")]
 	[DataRow(9, "Nove")]
-	public void UnitiesAreValid(int expected, string actual)
+	public void UnitiesAreValid(int actual, string expected)
 	{
 		SimpleAssert(expected, actual);
 	}
@@ -64,7 +63,7 @@ public class WordsToNumberConverterTest
 	[DataRow(87, "Oitenta e Sete")]
 	[DataRow(90, "Noventa")]
 	[DataRow(98, "Noventa e Oito")]
-	public void TensAreValid(int expected, string actual)
+	public void TensAreValid(long actual, string expected)
 	{
 		SimpleAssert(expected, actual);
 	}
@@ -106,7 +105,7 @@ public class WordsToNumberConverterTest
 	[DataRow( 909, "Novecentos e Nove" )]
 	[DataRow( 919, "Novecentos e Dezanove" )]
 	[DataRow( 999, "Novecentos e Noventa e Nove" )]
-	public void HundredsAreValid(int expected, string actual)
+	public void HundredsAreValid(long actual, string expected)
 	{
 		SimpleAssert(expected, actual);
 	}
@@ -121,7 +120,7 @@ public class WordsToNumberConverterTest
 	[DataRow(34001, "Trinta e Quatro Mil e Um")]
 	[DataRow(140000, "Cento e Quarenta Mil")]
 	[DataRow(140001, "Cento e Quarenta Mil e Um")]
-	public void ThousandsAreValid(int expected, string actual)
+	public void ThousandsAreValid(long actual, string expected)
 	{
 		SimpleAssert(expected, actual);
 	}
@@ -135,7 +134,7 @@ public class WordsToNumberConverterTest
 	[DataRow(2000122, "Dois Milhões Cento e Vinte e Dois")]
 	[DataRow(20000122, "Vinte Milhões Cento e Vinte e Dois")]
 	[DataRow(22000122, "Vinte e Dois Milhões Cento e Vinte e Dois")]
-	public void MillionsAreValid(int expected, string actual)
+	public void MillionsAreValid(long actual, string expected)
 	{
 		SimpleAssert(expected, actual);
 	}
@@ -150,7 +149,7 @@ public class WordsToNumberConverterTest
 	[DataRow(20000000122, "Vinte Mil Milhões Cento e Vinte e Dois")]
 	[DataRow(22000000122, "Vinte e Dois Mil Milhões Cento e Vinte e Dois")]
 
-	public void ThousandMillionsAreValid(long expected, string actual)
+	public void ThousandMillionsAreValid(long actual, string expected)
 	{
 		SimpleAssert(expected, actual);
 	}
@@ -164,7 +163,7 @@ public class WordsToNumberConverterTest
 	[DataRow(2000000122, "Dois Biliões Cento e Vinte e Dois")]
 	[DataRow(20000000122, "Vinte Biliões Cento e Vinte e Dois")]
 	[DataRow(22000000122, "Vinte e Dois Biliões Cento e Vinte e Dois")]
-	public void ThousandMillionsShortScaleAreValid(long expected, string actual)
+	public void ThousandMillionsShortScaleAreValid(long actual, string expected)
 	{
 		SimpleAssert(expected, actual, true);
 	}
@@ -179,7 +178,7 @@ public class WordsToNumberConverterTest
 	[DataRow(20000000000122, "Vinte Biliões Cento e Vinte e Dois")]
 	[DataRow(22000000000122, "Vinte e Dois Biliões Cento e Vinte e Dois")]
 
-	public void BillionsAreValid(long expected, string actual)
+	public void BillionsAreValid(long actual, string expected)
 	{
 		SimpleAssert(expected, actual);
 	}
@@ -194,7 +193,7 @@ public class WordsToNumberConverterTest
 	[DataRow(20000000000122, "Vinte Triliões Cento e Vinte e Dois")]
 	[DataRow(22000000000122, "Vinte e Dois Triliões Cento e Vinte e Dois")]
 
-	public void BillionsShortScaleAreValid(long expected, string actual)
+	public void BillionsShortScaleAreValid(long actual, string expected)
 	{
 		SimpleAssert(expected, actual, true);
 	}
@@ -216,22 +215,22 @@ public class WordsToNumberConverterTest
 	[DataRow(100123, "Cem Mil Cento e Vinte e Três" )]
 	[DataRow(112123, "Cento e Doze Mil Cento e Vinte e Três" )]
 	[DataRow(134123, "Cento e Trinta e Quatro Mil Cento e Vinte e Três" )]
-	public void RandomNumbersIntegers(int expected, string actual)
+	public void RandomNumbersIntegers(long actual, string expected)
 	{
 		SimpleAssert(expected, actual);
 	}
 
 	[DataTestMethod]
-	[DataRow(42.2, "Quarenta e Dois Vírgula Dois" )]
+	[DataRow(42.2, "Quarenta e Dois vírgula Dois" )]
 	[DataRow(102.0, "Cento e Dois" )]
 	[DataRow(103.000, "Cento e Três" )]
-	[DataRow(113.02, "Cento e Treze Vírgula Zero Dois" )]
-	[DataRow(123.0045, "Cento e Vinte e Três Vírgula Zero Zero Quarenta e Cinco" )]
-	[DataRow(902.982, "Novecentos e Dois Vírgula Novecentos e Oitenta e Dois" )]
-	[DataRow(100000.001, "Cem Mil Vírgula Zero Zero Um" )]
-	[DataRow(100123.100123, "Cem Mil Cento e Vinte e Três Vírgula Cem Mil Cento e Vinte e Três" )]
-	public void RandomNumbersDecimals(double expected, string actual)
+	[DataRow(113.02, "Cento e Treze vírgula Zero Dois" )]
+	[DataRow(123.0045, "Cento e Vinte e Três vírgula Zero Zero Quarenta e Cinco" )]
+	[DataRow(902.982, "Novecentos e Dois vírgula Novecentos e Oitenta e Dois" )]
+	[DataRow(100000.001, "Cem Mil vírgula Zero Zero Um" )]
+	[DataRow(100123.100123, "Cem Mil Cento e Vinte e Três vírgula Cem Mil Cento e Vinte e Três" )]
+	public void RandomNumbersDecimals(double actual, string expected)
 	{
-		SimpleAssert((decimal)expected, actual);
+		SimpleAssert(expected, actual);
 	}
 }

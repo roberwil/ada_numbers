@@ -47,7 +47,7 @@ internal static class NumberToWordsConverter
 		if (decimalPart == 0)
 			return result;
 
-		result += $" {Separators.DecimalSeparator} ";
+		result += $" {Separators.DecimalSeparator.ToLower()} ";
 		result = strDecimalPart.
 			TakeWhile(dp => dp == '0').
 			Aggregate(result, (current, _) => current + $"{WrittenNumbers.Zero} ");
