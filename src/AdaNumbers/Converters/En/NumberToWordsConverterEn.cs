@@ -95,8 +95,11 @@ internal static class NumberToWordsConverterEn
 		return NumberTokens.AddSeparatorsToNumber();
 	}
 
-	private static bool IsUnity(string number) =>
-		WrittenNumbersEn.WordsToNumberUnitiesMap.Resolve(number) is not null;
+	private static bool IsUnityOrTen(string number)
+	{
+		var result  = WrittenNumbersEn.WordsToNumberUnitiesAndTensMap.Resolve(number) is not null;
+		return !result ? number.Contains(SeparatorsEn.Dash) : result;
+	}
 
 	private static string AddSeparatorsToNumber(this IReadOnlyList<string> numberTokens)
 	{
@@ -107,8 +110,13 @@ internal static class NumberToWordsConverterEn
 			var currentToken = numberTokens[cursor];
 
 			var isHundred = cursor + 1 < numberTokens.Count &&
-			                IsUnity(currentToken) &&
-			                numberTokens[cursor + 1] == WrittenNumbersEn.Hundred;
+			                IsUnityOrTen(currentToken) &&
+			                (numberTokens[cursor + 1] == WrittenNumbersEn.Hundred ||
+			                 numberTokens[cursor + 1] == WrittenNumbersEn.Thousand ||
+			                 numberTokens[cursor + 1] == WrittenNumbersEn.Million ||
+			                 numberTokens[cursor + 1] == WrittenNumbersEn.ThousandMillion ||
+			                 numberTokens[cursor + 1] == WrittenNumbersEn.Billion ||
+			                 numberTokens[cursor + 1] == WrittenNumbersEn.Trillion);
 
 			var addComma = cursor > 1 &&
 			               isHundred;
@@ -117,7 +125,7 @@ internal static class NumberToWordsConverterEn
 			                   isHundred;
 
 			if (addComma)
-				result += $", {currentToken}";
+				result += $"{SeparatorsEn.Comma} {currentToken}";
 			else if (noSeparator)
 				result += $" {currentToken}";
 			else
@@ -144,7 +152,7 @@ internal static class NumberToWordsConverterEn
 		var ten = long.Parse(number.ToString()[..bridge]!)*10;
 		var unity = long.Parse(number.ToString()[bridge..]!);
 
-		result = $"{Tens(ten)}-{Unities(unity).ToLower()}";
+		result = $"{Tens(ten)}{SeparatorsEn.Dash}{Unities(unity).ToLower()}";
 		return result;
 	}
 

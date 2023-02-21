@@ -1,21 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>11</LangVersion>
-        <TargetFramework>netstandard2.1</TargetFramework>
         <Authors>roberwil</Authors>
-        <Description>Convert a number, i.e. 123, into "cento e vinte e três" and vice versa. Supports long and short scale.</Description>
-        <Copyright>roberwil © 2023</Copyright>
+        <Description>Convert a number to words and vice versa. Supports long and short scale, english and portuguese.</Description>
+        <Copyright>Copyright © Roberto W. P. Ribeiro, 2023.</Copyright>
         <RepositoryUrl>https://github.com/roberwil/ada_numbers</RepositoryUrl>
         <Title>Ada.Numbers</Title>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageReadmeFile>v2-0-0.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageReleaseNotes>
+			- Support for english numbers;
+			- Customizable settings for converters: choose language and scale
+		</PackageReleaseNotes>
 		<RepositoryType>git</RepositoryType>
+		<Version>2.0.0</Version>
+		<TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
+	
+	<ItemGroup>
+		<None Include="../../readmes/v2-0-0.md" Pack="true" PackagePath="/" />
+		<None Include="../../LICENSE" Pack="true" PackagePath="/" />
+	</ItemGroup>
 </Project>

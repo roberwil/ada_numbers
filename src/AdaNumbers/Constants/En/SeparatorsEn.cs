@@ -12,4 +12,5 @@ public static class SeparatorsEn
 	public const string DecimalSeparator = "Point";
 	public const string DecimalSeparatorAlternative = "Comma";
 	public const string Comma = ",";
+	public const string Dash = "-";
 }

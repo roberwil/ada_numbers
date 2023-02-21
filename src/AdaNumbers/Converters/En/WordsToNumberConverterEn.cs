@@ -18,8 +18,8 @@ internal static class WordsToNumberConverterEn
 
 		// Let the word be ins cute format: no extra spaces, first letter in capital
 		word = Regex.Replace(word, "\\s+", " ").Trim();
-		word = word.Replace("-", $" {SeparatorsEn.NumbersSeparator} ");
-		word = word.Replace(",", "");
+		word = word.Replace(SeparatorsEn.Dash, $" {SeparatorsEn.NumbersSeparator} ");
+		word = word.Replace(SeparatorsEn.Comma, string.Empty);
 		word = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.Trim());
 
 		// Check whether the number has a decimal part (length of 2)
@@ -91,9 +91,12 @@ internal static class WordsToNumberConverterEn
 			}
 
 			var numberHasIncorrectOrNoSeparator =
+				// cursor is valid for evaluation
 				cursor > 0 && (cursor + 1 < stringTokens.Length - 1) &&
+				// number is not part of number that ignore separator nor its next neighbour
 				!WrittenNumbersEn.NumbersThatIgnoreSeparator.Contains(token) &&
 				!WrittenNumbersEn.NumbersThatIgnoreSeparator.Contains(stringTokens[cursor+1]) &&
+				!WrittenNumbersEn.UnitiesThatCombineWithSeparator.Contains(token) &&
 				stringTokens[cursor - 1] != SeparatorsEn.NumbersSeparator;
 
 			var numberIsInIncorrectShortScaleFormat =
@@ -145,7 +148,7 @@ internal static class WordsToNumberConverterEn
 			if (maybeNumber is null) break;
 			var number = (long)maybeNumber;
 
-			if (number.Category() >= NumberCategory.Hundred)
+			if (number.Category() > NumberCategory.Hundred)
 			{
 				numericTokens.Push(number);
 				break;
