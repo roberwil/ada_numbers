@@ -65,11 +65,11 @@ For numerical types (`long, int, byte, decimal, double and float`), the method i
 
 ```csharp
 var number = 22;
-number.ToNumber() // > "Vinte e Dois"
+number.ToWords() // > "Vinte e Dois"
 
 Settings.Language = Settings.Parameters.Languages.En //Now, converters will use English
 var number = 22;
-number.ToNumber() // > "Twenty-two"
+number.ToWords() // > "Twenty-two"
 ```
 
 Check the method documentation for more details.
