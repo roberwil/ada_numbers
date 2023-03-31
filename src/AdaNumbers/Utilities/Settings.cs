@@ -22,6 +22,8 @@ public abstract class Settings
 		}
 	}
 
+	internal static int Limit = 15;
+
 	/// <summary>
 	/// Set the language for the converters. Available languages are Portuguese and English.
 	/// </summary>

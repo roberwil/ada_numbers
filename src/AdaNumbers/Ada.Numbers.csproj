@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>11</LangVersion>
+        <LangVersion>10</LangVersion>
         <Authors>roberwil</Authors>
         <Description>Convert a number to words and vice versa. Supports long and short scale, english and portuguese.</Description>
         <Copyright>Copyright © Roberto W. P. Ribeiro, 2023.</Copyright>
@@ -22,7 +22,7 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
-	
+
 	<ItemGroup>
 		<None Include="../../readmes/v2-0-0.md" Pack="true" PackagePath="/" />
 		<None Include="../../LICENSE" Pack="true" PackagePath="/" />
