@@ -1,9 +1,9 @@
 namespace Ada.Numbers.Constants;
 
-internal class WrittenNumbersEn
+internal abstract class WrittenNumbersEn
 {
 	internal const string Zero = "Zero";
-	internal const string One = "One";
+	private const string One = "One";
 	private const string Two = "Two";
 	private const string Three = "Three";
 	private const string Four = "Four";
