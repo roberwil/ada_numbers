@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Ada.Numbers.Utilities;
 
 /// <summary>
@@ -150,4 +152,7 @@ public static class Extensions
 
 	internal static byte Bridge(this byte number) =>
 		Bridge((long)number);
+
+	internal static string ToTitleCase(this string word) =>
+		CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word);
 }
