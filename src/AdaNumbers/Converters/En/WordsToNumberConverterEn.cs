@@ -17,10 +17,10 @@ internal static class WordsToNumberConverterEn
 		SelectScale();
 
 		// Let the word be ins cute format: no extra spaces, first letter in capital
-		word = Regex.Replace(word, "\\s+", " ").Trim();
-		word = word.Replace(SeparatorsEn.Dash, $" {SeparatorsEn.NumbersSeparator} ");
-		word = word.Replace(SeparatorsEn.Comma, string.Empty);
-		word = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.Trim());
+		word = Regex.Replace(word, "\\s+", " ").Trim()
+			.Replace(SeparatorsEn.Dash, $" {SeparatorsEn.NumbersSeparator} ")
+			.Replace(SeparatorsEn.Comma, string.Empty)
+			.ToTitleCase();
 
 		// Check whether the number has a decimal part (length of 2)
 		var wordsToConvert = word.Split($" {SeparatorsEn.DecimalSeparator} ");
@@ -34,7 +34,8 @@ internal static class WordsToNumberConverterEn
 				return ResolveWord(word, _useShortScale);
 			case 2:
 			{
-				var countZeros = wordsToConvert.Last().Split().Select(w => w)
+				var countZeros = wordsToConvert.Last().Split()
+					.Select(w => w)
 					.Count(w => w == WrittenNumbersEn.Zero);
 
 				var wholePart = ResolveWord(wordsToConvert.First(), _useShortScale);
@@ -55,14 +56,19 @@ internal static class WordsToNumberConverterEn
 		}
 	}
 
+	private static long? MapNumberFromScale(string word, bool useShortScale)
+	{
+		return useShortScale
+			? WrittenNumbersEn.WordsToNumberMap.Resolve(word) ?? WrittenNumbersEn.WordsToNumberMapShorScale.Resolve(word)
+			: WrittenNumbersEn.WordsToNumberMap.Resolve(word) ?? WrittenNumbersEn.WordsToNumberMapLongScale.Resolve(word);
+	}
+
 	private static string? ResolveWord(string word, bool useShortScale = false)
 	{
 		word = Regex.Replace(word, "\\s+", " ").Trim();
 
 		// Try to get a direct match from the map
-		var number = useShortScale
-			? WrittenNumbersEn.WordsToNumberMap.Resolve(word) ?? WrittenNumbersEn.WordsToNumberMapShorScale.Resolve(word)
-			: WrittenNumbersEn.WordsToNumberMap.Resolve(word) ?? WrittenNumbersEn.WordsToNumberMapLongScale.Resolve(word);
+		var number = MapNumberFromScale(word, useShortScale);
 
 		if (number is not null)
 			return number.ToString();
@@ -108,12 +114,8 @@ internal static class WordsToNumberConverterEn
 				return Messages.InvalidNumber;
 
 			// Attempt to find a match
-			number = useShortScale
-				? WrittenNumbersEn.WordsToNumberMap.Resolve(token) ?? WrittenNumbersEn.WordsToNumberMapShorScale.Resolve(token)
-				: WrittenNumbersEn.WordsToNumberMap.Resolve(token) ?? WrittenNumbersEn.WordsToNumberMapLongScale.Resolve(token);
-
-			if (number is null)
-				return Messages.InvalidNumber;
+			number = MapNumberFromScale(token, useShortScale);
+			if (number is null) return Messages.InvalidNumber;
 
 			if (IsToComputeMultiplier(token, numericTokens.Count))
 			{
@@ -124,16 +126,15 @@ internal static class WordsToNumberConverterEn
 			numericTokens.Push(number);
 		}
 
-		return numericTokens.Sum().ToString();
+		return numericTokens
+			.Sum()
+			.ToString();
 	}
 
 	private static bool IsToComputeMultiplier(string token, int numberOfNumericTokens)
 	{
-		return (token is WrittenNumbersEn.Hundred or
-			       WrittenNumbersEn.Thousand or
-			       WrittenNumbersEn.Million or
-			       WrittenNumbersEn.Billion or
-			       WrittenNumbersEn.Trillion)
+		return token is WrittenNumbersEn.Hundred or WrittenNumbersEn.Thousand or
+			       WrittenNumbersEn.Million or WrittenNumbersEn.Billion or WrittenNumbersEn.Trillion
 		       && numberOfNumericTokens != 0;
 	}
 

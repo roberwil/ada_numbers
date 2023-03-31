@@ -17,8 +17,7 @@ internal static class WordsToNumberConverter
 		SelectScale();
 
 		// Let the word be ins cute format: no extra spaces, first letter in capital
-		word = Regex.Replace(word, "\\s+", " ").Trim();
-		word = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.Trim());
+		word = Regex.Replace(word, "\\s+", " ").Trim().ToTitleCase();
 
 		// Check whether the number has a decimal part (length of 2)
 		var wordsToConvert = word.Split($" {Separators.DecimalSeparator} ");
@@ -53,14 +52,20 @@ internal static class WordsToNumberConverter
 		}
 	}
 
+	private static long? MapNumberFromScale(string word, bool useShortScale)
+	{
+		return useShortScale
+			? WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapShorScale.Resolve(word)
+			: WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapLongScale.Resolve(word);
+	}
+
+
 	private static string? ResolveWord(string word, bool useShortScale = false)
 	{
 		word = Regex.Replace(word, "\\s+", " ").Trim();
 
 		// Try to get a direct match from the map
-		var number = useShortScale
-			? WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapShorScale.Resolve(word)
-			: WrittenNumbers.WordsToNumberMap.Resolve(word) ?? WrittenNumbers.WordsToNumberMapLongScale.Resolve(word);
+		var number = MapNumberFromScale(word, useShortScale);
 
 		if (number is not null)
 			return number.ToString();
@@ -105,12 +110,9 @@ internal static class WordsToNumberConverter
 				return Messages.InvalidNumber;
 
 			// Attempt to find a match
-			number = useShortScale
-				? WrittenNumbers.WordsToNumberMap.Resolve(token) ?? WrittenNumbers.WordsToNumberMapShorScale.Resolve(token)
-				: WrittenNumbers.WordsToNumberMap.Resolve(token) ?? WrittenNumbers.WordsToNumberMapLongScale.Resolve(token);
+			number = MapNumberFromScale(token, useShortScale);
 
-			if (number is null)
-				return Messages.InvalidNumber;
+			if (number is null) return Messages.InvalidNumber;
 
 			if (IsToComputeMultiplier(token, numericTokens.Count))
 			{
@@ -134,13 +136,10 @@ internal static class WordsToNumberConverter
 
 	private static bool IsToComputeMultiplier(string token, int numberOfNumericTokens)
 	{
-		return (token is WrittenNumbers.Thousand or
-			       WrittenNumbers.MillionSingular or
-			       WrittenNumbers.MillionPlural or
-			       WrittenNumbers.BillionSingular or
-			       WrittenNumbers.BillionPlural or
-			       WrittenNumbers.TrillionSingular or
-			       WrittenNumbers.TrillionPlural)
+		return token is WrittenNumbers.Thousand or WrittenNumbers.MillionSingular or
+			       WrittenNumbers.MillionPlural or WrittenNumbers.BillionSingular or
+			       WrittenNumbers.BillionPlural or WrittenNumbers.TrillionSingular or
+			       WrittenNumbers.TrillionPlural
 		       && numberOfNumericTokens != 0;
 	}
 
