@@ -6,7 +6,6 @@ namespace Ada.Numbers.Converters;
 
 internal static class NumberToWordsConverter
 {
-	private const byte Limit = 15;
 	private static bool _useShortScale;
 	private static readonly List<string> NumberTokens = new();
 
@@ -15,7 +14,7 @@ internal static class NumberToWordsConverter
 
 	internal static string Convert(long number)
 	{
-		if (number.NumberOfDigits() > Limit)
+		if (number.NumberOfDigits() > Settings.Limit)
 			return Messages.Unsupported;
 
 		SelectScale();
@@ -28,14 +27,14 @@ internal static class NumberToWordsConverter
 	{
 		SelectScale();
 
-		var strNumber = number.
-			ToString(CultureInfo.InvariantCulture).
-			Split(".");
+		var strNumber = number
+			.ToString(CultureInfo.InvariantCulture)
+			.Split(".");
 
 		var strIntegerPart = strNumber.First();
 		var strDecimalPart = strNumber.Length == 1 ? "0" : strNumber.Last();
 
-		if (strIntegerPart.Length > Limit || strDecimalPart.Length > Limit)
+		if (strIntegerPart.Length > Settings.Limit || strDecimalPart.Length > Settings.Limit)
 			return Messages.Unsupported;
 
 		var wholePart = long.Parse(strIntegerPart);
@@ -48,9 +47,9 @@ internal static class NumberToWordsConverter
 			return result;
 
 		result += $" {Separators.DecimalSeparator.ToLower()} ";
-		result = strDecimalPart.
-			TakeWhile(dp => dp == '0').
-			Aggregate(result, (current, _) => current + $"{WrittenNumbers.Zero} ");
+		result = strDecimalPart
+			.TakeWhile(dp => dp == '0')
+			.Aggregate(result, (current, _) => current + $"{WrittenNumbers.Zero} ");
 
 		NumberTokens.Clear();
 		result += ResolveNumber(decimalPart);
@@ -78,9 +77,7 @@ internal static class NumberToWordsConverter
 		if (result == string.Empty)
 		{
 			var strNumber = number.ToString();
-
 			var bridge = number.Bridge();
-
 			var flagFirstDigits = false;
 
 			if (numberCategory == NumberCategory.Hundred)
@@ -95,9 +92,8 @@ internal static class NumberToWordsConverter
 			ResolveNumber(otherDigits, flagOtherDigits);
 		}
 		else
-		{
 			NumberTokens.Add(result);
-		}
+
 
 		return NumberTokens.AddSeparatorsToNumber();
 	}
@@ -119,15 +115,11 @@ internal static class NumberToWordsConverter
 		return result;
 	}
 
-	private static string Unities(long number)
-	{
-		return WrittenNumbers.NumbersToWordsMapUnities.Resolve(number);
-	}
+	private static string Unities(long number) =>
+		WrittenNumbers.NumbersToWordsMapUnities.Resolve(number);
 
-	private static string Tens(long number)
-	{
-		return WrittenNumbers.NumbersToWordsMapTens.Resolve(number);
-	}
+	private static string Tens(long number) =>
+		WrittenNumbers.NumbersToWordsMapTens.Resolve(number);
 
 	private static string Hundreds(long number, bool isCent = false)
 	{
@@ -147,15 +139,11 @@ internal static class NumberToWordsConverter
 		return results.Resolve(number);
 	}
 
-	private static string Thousands(long number)
-	{
-		return EvaluateThousandsAndOver(number, (long)1e3, WrittenNumbers.Thousand, WrittenNumbers.Thousand);
-	}
+	private static string Thousands(long number) =>
+		EvaluateThousandsAndOver(number, (long)1e3, WrittenNumbers.Thousand, WrittenNumbers.Thousand);
 
-	private static string Millions(long number)
-	{
-		return EvaluateThousandsAndOver(number, (long)1e6, WrittenNumbers.MillionSingular, WrittenNumbers.MillionPlural);
-	}
+	private static string Millions(long number) =>
+		EvaluateThousandsAndOver(number, (long)1e6, WrittenNumbers.MillionSingular, WrittenNumbers.MillionPlural);
 
 	private static string ThousandMillions(long number)
 	{
